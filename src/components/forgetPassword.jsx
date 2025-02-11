@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import ground from "../assets/bechem-background.jpg";
 import headerImage from "../assets/bechemheader.jpeg"; // Import the header image
-import SuccessPopup from "./successPopup";
+import SuccessPopup from "./SuccessPopup";
 
 const ForgotPassword = () => {
   const [isOpen, setIsOpen] = useState(true);

@@ -16,7 +16,7 @@ import ProfilePage from "./components/ProfilePage";
 import PoliciesSection from "./components/PoliciesSection"
 import EditUserPopup from "./components/EditUserPopup";
 import AddUserPopup from "./components/AddUserPopup";
-import SuccessPopup from "./components/successPopup";
+import SuccessPopup from "./components/SuccessPopup";
 import Notifications from "./components/Notifications";
 import ForgotPassword from "./components/forgetPassword";
 

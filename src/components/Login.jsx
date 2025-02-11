@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ground from "../assets/bechem-background.jpg";
 import logo from "../assets/bechem-logoy.jpeg"
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import SuccessPopup from "./successPopup"; 
+import SuccessPopup from "./SuccessPopup"; 
 import Success from "../assets/Successful.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
