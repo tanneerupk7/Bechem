@@ -1,7 +1,7 @@
 
 
 import React, { useState } from "react";
-import ground from "../assets/bechem-background.jpg";
+import ground from "../assets/bechem-background.jpeg";
 import headerImage from "../assets/bechemheader.jpeg"; // Import the header image
 import SuccessPopup from "./SuccessPopup";
 
