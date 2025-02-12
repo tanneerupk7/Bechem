@@ -321,7 +321,7 @@ export const Login = ({ setAccountId, setAccountName }) => {
         // </div>
         <>
       {(
-        <div className="flex justify-center items-center min-h-screen absolute top-0 left-0 bg-black bg-opacity-80 px-4 ">
+        <div className="flex justify-center items-center min-h-screen w-screen absolute top-0 left-0 bg-black bg-opacity-80">
           <div className="relative bg-white rounded-lg shadow-lg w-[62%] h-auto md:h-[520px] flex flex-col ">
             {/* Header Bar */}
             <div

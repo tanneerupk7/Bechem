@@ -262,8 +262,8 @@ const InvoiceTable = ({ accountId }) => {
                   <th className="p-2 font-normal" style={{ width: "8%" }}>Transporter Code</th>
                   <th className="p-2 font-normal" style={{ width: "8%" }}>Amount</th>
                   <th className="p-2 font-normal" style={{ width: "8%" }}>Sales Tax No</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>Delivered Status</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>Expected Delivery Date</th>
+                  {/* <th className="p-2 font-normal" style={{ width: "8%" }}>Delivered Status</th> */}
+                  <th className="p-2 font-normal" style={{ width: "8%" }}>ETA</th>
                   <th className="p-2 font-normal" style={{ width: "8%" }}>Actuals</th>
                   <th className="p-2 font-normal border-r border-gray-300" style={{ width: "8%" }}>Invoice</th>
                 </tr>
@@ -281,7 +281,7 @@ const InvoiceTable = ({ accountId }) => {
                     <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.tran_cd}</td>
                     <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Amount}</td>
                     <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Sales_tax_No}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.DELIVERED}</td>
+                    {/* <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.DELIVERED}</td> */}
                     <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.EDD}</td>
                     <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Actuals}</td>
                     <td className="p-2 text-center border-r border-gray-300">
