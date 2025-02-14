@@ -250,6 +250,7 @@ const SOGTable = ({ accountId }) => {
             )}
           </div>
         </div>
+        <footer className="absolute bottom-5">
           <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
             Copyrights @2025 All rights reserved | Sales Order Gateway |
           </span>
@@ -261,6 +262,7 @@ const SOGTable = ({ accountId }) => {
           >
             Bechem India
           </a>
+          </footer>
       </div>
     </>
   );

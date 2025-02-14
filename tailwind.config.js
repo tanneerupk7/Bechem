@@ -9,7 +9,11 @@ export default {
     
     extend: {
       screens: {
-        'desktop': '1280px',
+        'c-sm' : '640px',
+        'c-md' : '768px',
+        'c-lg' : '1024px',
+        'c-xl' : '1280px',
+        'c-2xl': '1536px',
       },
       fontWeight: {
         "heading":'14px',

@@ -18,17 +18,23 @@ import {
 import BackgroundImage from "../assets/LandingScreen.svg"; // Add your background image path
 import headerImage from "../assets/bechemheader.jpeg";
 import ForgotPassword from "./forgetPassword";
+import { BlinkBlur } from "react-loading-indicators";
 
 export const Login = ({ setAccountId, setAccountName }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [forgotPasswordUsername, setFogotPasswordUsername] = useState("");
+  const [forgotPasswordMailId, setFogotPasswordMailId] = useState("");
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const navigate = useNavigate();
   const [showForgotPasswordPopup, setShowForgotPasswordPopup] = useState(false);
   const API_URI = import.meta.env.VITE_API_URI;
+  const [forgotPasswordError, setForgotPasswordError] = useState("");
+  const [isForgotPasswordLoading, setIsForgotPasswordLoading] = useState(false);
+
 
   const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
@@ -63,7 +69,7 @@ export const Login = ({ setAccountId, setAccountName }) => {
           setAccountName(ac_name);
         }
 
-        navigate("/Invoice_Table");
+        navigate("/Dashboard");
       } else {
         setErrorMessage(data.message || "Invalid username or password.");
       }
@@ -75,15 +81,77 @@ export const Login = ({ setAccountId, setAccountName }) => {
     }
   };
 
+  
+  // ... existing code ...
 
-  const handleSend = (e) => {
-    e.preventDefault(); // Prevent form submission from reloading the page
-    if (username.trim() === "" || email.trim() === "") {
+  // const handleSend = async (e) => {
+  //   e.preventDefault();
+  //   if (forgotPasswordUsername.trim() === "" || forgotPasswordMailId.trim() === "") {
+  //     alert("Please fill out both fields.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch(`${API_URI}/forget_password`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         ac_name: forgotPasswordUsername,
+  //         email: forgotPasswordMailId,
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok && data.status === "success") {
+  //       setShowSuccessPopup(true);
+  //     } else {
+  //       setForgotPasswordError(data.message || "Failed to process request. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Forgot password error:", error);
+  //     setForgotPasswordError("An error occurred. Please try again.");
+  //   }
+  // }; 
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (forgotPasswordUsername.trim() === "" || forgotPasswordMailId.trim() === "") {
       alert("Please fill out both fields.");
       return;
     }
-    setShowSuccessPopup(true)
+
+    setIsForgotPasswordLoading(true); // Start loading
+
+    try {
+      const response = await fetch(`${API_URI}/forget_password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ac_name: forgotPasswordUsername,
+          email: forgotPasswordMailId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === "success") {
+        setShowSuccessPopup(true);
+      } else {
+        setForgotPasswordError(data.message || "Failed to process request. Please try again.");
+      }
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      setForgotPasswordError("An error occurred. Please try again.");
+    } finally {
+      setIsForgotPasswordLoading(false); // Stop loading
+    }
   };
+
+  // Added missing closing brace here
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -93,15 +161,29 @@ export const Login = ({ setAccountId, setAccountName }) => {
     setShowForgotPasswordPopup(false);
   };
 
+  // ... rest of the code ...
+
 
   return (
     <div className="">
+      
+      {(loading || isForgotPasswordLoading) && (
+        <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
+          <BlinkBlur 
+            color="#FBB900"
+            size="large"
+          />
+          <p className="mt-4 text-white">
+            {loading ? "Logging in..." : "Processing..."}
+          </p>
+        </div>
+      )}
       <div
         className="h-screen bg-cover bg-center flex flex-col justify-between"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       >
         {/* Login Form Section */}
-        <div className="flex items-center justify-center h-full desktop:justify-end">
+        <div className="flex items-center h-full justify-end c-lg:justify-end">
           <div className="bg-white bg-opacity-45 backdrop-blur-lg rounded-2xl shadow-lg p-8 pb-20 w-[26rem] mr-20">
             <h2 className="text-3xl font-bold text-gray-800 mb-1">Login</h2>
             <p className="text-gray-600 mb-6">Welcome to BECHEM</p>
@@ -210,118 +292,9 @@ export const Login = ({ setAccountId, setAccountName }) => {
       </div>
 
       {showForgotPasswordPopup && (
-        // <div className="flex justify-center items-center min-h-screen absolute top-0 left-0 bg-black bg-opacity-80 px-4 ">
-        //   <div className="relative bg-white rounded-lg shadow-lg w-[62%] h-auto md:h-[520px] flex flex-col ">
-        //     {/* Header Bar */}
-        //     <div
-        //       className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
-        //       style={{
-        //         backgroundImage: `url(${headerImage})`,
-        //         backgroundSize: "cover",
-        //         backgroundPosition: "center",
-        //       }}
-        //     >
-        //       <div>
-        //         <h2 className="text-xl font-bold text-slate-900">Notify Admin</h2>
-        //         <p className="text-gray-500" style={{ fontSize: "0.600rem" }}>
-        //           Enter the below fields here, click save when you’re done will notify admin.
-        //         </p>
-        //       </div>
-        //       {/* Close Button (Cross Mark) */}
-        //       <button
-        //         onClick={() => setShowForgotPasswordPopup(false)}
-        //         className="text-gray-700 hover:text-gray-900 focus:outline-none"
-        //       >
-        //         <svg
-        //           xmlns="http://www.w3.org/2000/svg"
-        //           className="h-6 w-6"
-        //           fill="none"
-        //           viewBox="0 0 24 24"
-        //           stroke="currentColor"
-        //         >
-        //           <path
-        //             strokeLinecap="round"
-        //             strokeLinejoin="round"
-        //             strokeWidth={2}
-        //             d="M6 18L18 6M6 6l12 12"
-        //           />
-        //         </svg>
-        //       </button>
-        //     </div>
- 
-        //     {/* Main Content */}
-        //     <div className="flex flex-col md:flex-row flex-grow">
-        //       {/* Left Side Image */}
-        //       <div className="md:w-[54%] w-full p-4">
-        //         <img
-        //           src={ground}
-        //           alt="Company Building"
-        //           className="object-cover rounded-lg h-full"
-        //         />
-        //       </div>
- 
-        //       {/* Right Side Content */}
-        //       <div className="md:w-[60%] w-full p-8 flex flex-col justify-between mt-20">
-        //         <form className="space-y-6">
-        //           <div>
-        //             <label
-        //               htmlFor="username"
-        //               className="block text-sm font-medium text-gray-700 mb-2"
-        //             >
-        //               User Name
-        //             </label>
-        //             <input
-        //               type="text"
-        //               id="username"
-        //               value={username}
-        //               onChange={(e) => setUsername(e.target.value)}
-        //               className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
-        //               placeholder="Akhil25"
-        //             />
-        //           </div>
-        //           <div>
-        //             <label
-        //               htmlFor="email"
-        //               className="block text-sm font-medium text-gray-700 mb-0"
-        //             >
-        //               Mail Id
-        //             </label>
-        //             <input
-        //               type="email"
-        //               id="email"
-        //               value={email}
-        //               onChange={(e) => setEmail(e.target.value)}
-        //               className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
-        //               placeholder="xxxxxxxxxxxxxxxx@gmail.com"
-        //             />
-        //           </div>
-        //         </form>
- 
-        //         {/* Buttons */}
-        //         <div className="flex justify-end space-x-4 mb-10 mr-14">
-        //           <button
-        //             type="button"
-        //             className="w-28 md:w-36 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 rounded-md"
-        //             onClick={() => setShowForgotPasswordPopup(false)}
-        //           >
-        //             Cancel
-        //           </button>
-        //           <button
-        //             type="submit"
-        //             className="w-28 md:w-36 bg-green-700 hover:bg-green-800 text-white font-medium py-2 rounded-md"
-        //             onClick={handleSend && (() => setShowSuccessPopup(true))}
-        //           >
-        //             Send
-        //           </button>
-                 
-        //         </div>
-        //       </div>
-        //     </div>
-        //   </div>
-        // </div>
         <>
       {(
-        <div className="flex justify-center items-center min-h-screen w-screen absolute top-0 left-0 bg-black bg-opacity-80">
+        <div className="flex justify-center items-center min-h-screen w-full absolute top-0 left-0 bg-black bg-opacity-80">
           <div className="relative bg-white rounded-lg shadow-lg w-[62%] h-auto md:h-[520px] flex flex-col ">
             {/* Header Bar */}
             <div
@@ -384,8 +357,8 @@ export const Login = ({ setAccountId, setAccountName }) => {
                     <input
                       type="text"
                       id="username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
+                      value={forgotPasswordUsername}  // Changed from username
+                      onChange={(e) => setFogotPasswordUsername(e.target.value)}
                       className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
                       placeholder="Akhil25"
                     />
@@ -400,8 +373,8 @@ export const Login = ({ setAccountId, setAccountName }) => {
                     <input
                       type="email"
                       id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={forgotPasswordMailId}  // Changed from email
+                      onChange={(e) => setFogotPasswordMailId(e.target.value)}
                       className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
                       placeholder="xxxxxxxxxxxxxxxx@gmail.com"
                     />
@@ -412,7 +385,7 @@ export const Login = ({ setAccountId, setAccountName }) => {
                 <div className="flex justify-end space-x-4 mb-10 mr-14">
                   <button
                     type="button"
-                    className="w-28 md:w-36 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 rounded-md"
+                    className="w-28 md:w-36 bg-gray-300 hover:bg-customYellow text-white font-medium py-2 rounded-md"
                     onClick={closeAllPopups}
                   >
                     Cancel
@@ -433,6 +406,7 @@ export const Login = ({ setAccountId, setAccountName }) => {
 
       {showSuccessPopup && <SuccessPopup onClose={closeAllPopups} />}
     </>
+    // <ForgotPassword />
       )}
     </div>
   );

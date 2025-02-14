@@ -83,7 +83,7 @@ const Header = () => {
               onClick={toggleDropdown}
             />
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 md:w-48 bg-gray-100 rounded-lg shadow-lg">
+              <div className="absolute right-0 mt-2 w-40 md:w-48 bg-gray-100 rounded-lg shadow-lg z-50">
                 <ul className="flex flex-col">
                   <Link
                     className="px-3 md:px-4 py-2 hover:bg-gray-200 rounded-lg"
@@ -98,12 +98,12 @@ const Header = () => {
                   >
                     User Details
                   </Link>
-                  <Link
+                  {/* <Link
                     className="px-3 md:px-4 py-2 hover:bg-gray-200 rounded-lg"
                     to={"/Policy"}
                   >
                     Policy
-                  </Link>
+                  </Link> */}
                   <Link to={"/"} className="px-3 md:px-4 py-2 hover:bg-gray-200 rounded-lg">
                     Log Out
                   </Link>
@@ -112,7 +112,7 @@ const Header = () => {
             )}
             
           </div>
-          <Link to={"/Invoice_Table"}>
+          <Link to={"/Dashboard"}>
             <img
               className="cursor-pointer h-6 md:h-9"
               src={HomeIcon}

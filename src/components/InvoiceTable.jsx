@@ -207,10 +207,6 @@ const InvoiceTable = ({ accountId }) => {
                   className="w-full p-1.5 text-sm rounded outline-none pr-8"
                   onChange={handleSearch}
                 />
-                {/* <FaFilter
-                  className="absolute right-3 text-gray-500 cursor-pointer"
-                  onClick={() => setShowFilterPopup(!showFilterPopup)}
-                /> */}
                 <img src={Filter} alt="Filter Icon" 
                   onClick={() => setShowFilterPopup(!showFilterPopup)}
                   />
@@ -303,34 +299,7 @@ const InvoiceTable = ({ accountId }) => {
               Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredData.length)} to{" "}
               {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries
             </p>
-            {/* <div className="flex items-center gap-2">
-              <button
-                className={`px-4 py-2 rounded ${currentPage === 1 ? "bg-white text-gray-500" : "bg-white hover:bg-paginationColor text-gray-700"}`}
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                &lt; Previous
-              </button>
-              <button className="px-3 py-1 rounded-full bg-gray-200 text-gray-700">
-                {currentPage}
-              </button>
-              {currentPage + 1 <= totalPages && (
-                <button
-                  className="px-3 py-1 rounded-full bg-paginationColor text-gray-700 hover:bg-paginationColor"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                >
-                  {currentPage + 1}
-                </button>
-              )}
-              {currentPage !== totalPages && (
-                <button
-                  className="px-3 py-1 rounded-full bg-white text-gray-700 hover:bg-paginationColor"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                >
-                  Next &gt;
-                </button>
-              )}
-            </div> */}
+            
             <div className="flex items-center gap-2">
             <button
               className={`px-4 py-2 rounded ${
@@ -381,7 +350,7 @@ const InvoiceTable = ({ accountId }) => {
             </button>
           </div>
           </div>
-          
+          <footer className="absolute bottom-5">
             <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
               Copyrights @2025 All rights reserved | Sales Order Gateway |
             </span>
@@ -393,6 +362,7 @@ const InvoiceTable = ({ accountId }) => {
             >
               Bechem India
             </a>
+            </footer>
           </div>
       {/* </div> */}
     </>

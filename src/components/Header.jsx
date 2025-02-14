@@ -57,7 +57,7 @@ const Header = () => {
           {/* Notification Bell Icon */}
           <Link to={"/Notifications"}>
             <img
-              className="cursor-pointer h-6 md:h-9"
+              className="cursor-pointer h-6 md:h-10"
               src={BellIcon}
               alt="Notification Bell"
             />
@@ -95,7 +95,7 @@ const Header = () => {
               </div>
             )}
           </div>
-          <Link to={"/Invoice_Table"}>
+          <Link to={"/Dashboard"}>
             <img
               className="cursor-pointer h-6 md:h-9"
               src={HomeIcon}
@@ -108,8 +108,8 @@ const Header = () => {
       </header>
 
       {/* Navigation Menu */}
-      <div className="px-4 md:px-80">
-        <nav className="w-full bg-gradient-to-r from-neutral-200 to-[#d9d9d9] shadow-m border px-4 md:px-10 py-4 rounded-br-full rounded-bl-full relative">
+      <div className="c-lg:px-[20%]">
+        <nav className="w-full bg-gradient-to-r from-neutral-200 to-[#d9d9d9] shadow-m border px-4 py-4 rounded-br-full rounded-bl-full  ">
           <ul className="flex flex-wrap justify-center gap-4 md:gap-8">
             {menuItems.map(({ name, id, path }) => (
               <li key={id} className="relative">
@@ -122,7 +122,6 @@ const Header = () => {
                 >
                   {name}
                 </Link>
-                {/* Add underline for active tab */}
                 {activeTab === path && (
                   <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black mt-2"></div>
                 )}
@@ -131,6 +130,7 @@ const Header = () => {
           </ul>
         </nav>
       </div>
+      
     </>
   );
 };

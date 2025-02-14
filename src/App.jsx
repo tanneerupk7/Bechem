@@ -19,6 +19,7 @@ import AddUserPopup from "./components/AddUserPopup";
 import SuccessPopup from "./components/SuccessPopup";
 import Notifications from "./components/Notifications";
 import ForgotPassword from "./components/forgetPassword";
+import Dashboard from "./components/Dashboard";
 
 const App = () => {
   const [accountId, setAccountId] = useState();
@@ -67,9 +68,13 @@ const App = () => {
           path="/Policy"
           element={<PoliciesSection accountId={accountId} accountName={accountName} />}
         />
+        <Route
+          path="/Dashboard"
+          element={<Dashboard accountId={accountId} accountName={accountName} />}
+        />
       </Routes>
     </Router>
-    // <ForgotPassword />
+    // <Dashboard />
   );
 };
 

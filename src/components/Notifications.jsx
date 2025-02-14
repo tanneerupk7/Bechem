@@ -1,48 +1,49 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./HeaderForUsersDetails";
 import { FaFilter } from "react-icons/fa"; // Import Funnel icon
 import { Link } from "react-router-dom";
 import ResetPasswordPopup from "./ResetPasswordPopup";
+import Footer from "./Footer";
 
-const notifications = [
-  { id: 1, name: "Adithya Mankal", date: "Yesterday", message: "A distributor wants to reset password would you like to...", time: "13:55" },
-  { id: 2, name: "Adithya Mankal", date: "09-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 3, name: "Adithya Mankal", date: "05-01-2025", message: "A distributor Hai I am Pavan Kumar " },
-  { id: 4, name: "Adithya Mankal", date: "02-01-2025", message: "A distributor Hai I am Pavan Kumar " },
-  { id: 5, name: "Adithya Mankal", date: "25-12-2024", message: "A distributor Hai I am Pavan Kumar " },
-  { id: 1, name: "Adithya Mankal", date: "Yesterday", message: "A distributor wants to reset password would you like to...", time: "13:55" },
-  { id: 2, name: "Adithya Mankal", date: "09-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 3, name: "Adithya Mankal", date: "05-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 4, name: "Adithya Mankal", date: "02-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 5, name: "Adithya Mankal", date: "25-12-2024", message: "A distributor wants to reset password would you like to..." },
-  { id: 1, name: "Adithya Mankal", date: "Yesterday", message: "A distributor wants to reset password would you like to...", time: "13:55" },
-  { id: 2, name: "Adithya Mankal", date: "09-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 3, name: "Adithya Mankal", date: "05-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 4, name: "Adithya Mankal", date: "02-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 5, name: "Adithya Mankal", date: "25-12-2024", message: "A distributor wants to reset password would you like to..." },
-  { id: 1, name: "Adithya Mankal", date: "Yesterday", message: "A distributor wants to reset password would you like to...", time: "13:55" },
-  { id: 2, name: "Adithya Mankal", date: "09-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 3, name: "Adithya Mankal", date: "05-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 4, name: "Adithya Mankal", date: "02-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 5, name: "Adithya Mankal", date: "25-12-2024", message: "A distributor wants to reset password would you like to..." },
-  { id: 1, name: "Adithya Mankal", date: "Yesterday", message: "A distributor wants to reset password would you like to...", time: "13:55" },
-  { id: 2, name: "Adithya Mankal", date: "09-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 3, name: "Adithya Mankal", date: "05-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 4, name: "Adithya Mankal", date: "02-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 5, name: "Adithya Mankal", date: "25-12-2024", message: "A distributor wants to reset password would you like to..." },
-  { id: 1, name: "Adithya Mankal", date: "Yesterday", message: "A distributor wants to reset password would you like to...", time: "13:55" },
-  { id: 2, name: "Adithya Mankal", date: "09-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 3, name: "Adithya Mankal", date: "05-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 4, name: "Adithya Mankal", date: "02-01-2025", message: "A distributor wants to reset password would you like to..." },
-  { id: 5, name: "Adithya Mankal", date: "25-12-2024", message: "A distributor wants to reset password would you like to..." },
-];
+
+
+
 
 export default function NotificationsPanel() {
-  const [selectedNotification, setSelectedNotification] = useState(notifications[0]);
+  
   const [showResetPassword,setShowResetPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [data, setData] = useState([]);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const API_URI = import.meta.env.VITE_API_URI;
 
+  useEffect(() => {
+    console.log('Fetching from:', `${API_URI}/notifications`); // Log the full URL
+
+    fetch(`${API_URI}/notifications`)
+      .then((response) => {
+        console.log('Response status:', response.status); // Log response status
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Received data:', data); // Log the received data
+        setData(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Fetch error:', error); // Log any errors
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
+
+  console.log(data)
   // const handleSave = () => {
   //   // Handle save logic here
   //   console.log("New Password:", newPassword);
@@ -94,11 +95,11 @@ export default function NotificationsPanel() {
       <div className="w-1/3 bg-white border rounded-lg p-4 overflow-y-auto">
        
         <div className="">
-            {notifications.map((item,index) => (
+            {data?.map((item,index) => (
               <div
                 key={index}
                 className={`p-3 rounded cursor-pointer ${
-                  selectedNotification.id === item.id ? "bg-gray-200" : "hover:bg-gray-100"
+                  selectedNotification?.id === item.id ? "bg-gray-200" : "hover:bg-gray-100"
                 }`}
                 onClick={() => setSelectedNotification(item)}
               >
@@ -114,9 +115,9 @@ export default function NotificationsPanel() {
       {/* Content Area */}
       <div className="w-2/3 bg-white shadow rounded-lg p-6 ml-4">
         <p className="font-semibold text-gray-800 text-lg">Request for Password Reset</p>
-        <p className="text-sm text-gray-600">From: {selectedNotification.name}</p>
+        <p className="text-sm text-gray-600">From: {selectedNotification?.name}</p>
         <p className="text-gray-700 mt-2">
-          A distributor wants to reset password of {selectedNotification.name}, would you like to change password?
+          A distributor wants to reset password of {selectedNotification?.name}, would you like to change password?
         </p>
 
             <button 
@@ -126,10 +127,10 @@ export default function NotificationsPanel() {
               Reset
             </button>
            
-        <p className="text-xs text-gray-400 mt-2">{selectedNotification.date} {selectedNotification.time || ""}</p>
+        <p className="text-xs text-gray-400 mt-2">{selectedNotification?.date} {selectedNotification?.time || ""}</p>
       </div>
     </div>
-    <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
+    {/* <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
         Copyrights @2025 All rights reserved | Sales Order Gateway |
       </span>
         <a
@@ -139,7 +140,8 @@ export default function NotificationsPanel() {
         target="_blank"
       >
         Bechem India
-      </a>
+      </a> */}
+      <Footer />
     </div>
     
     {showResetPassword && ( 
@@ -171,7 +173,7 @@ export default function NotificationsPanel() {
                     <input
                       type="text"
                       className="w-full sm:w-72 border border-gray-300 rounded-md shadow-sm focus:ring-gray-300 focus:ring-opacity-50 p-2 bg-gray-100 cursor-not-allowed"
-                      value="Akhil25"
+                      value="Pavan1378"
                       readOnly
                     />
                   </div>
@@ -184,7 +186,7 @@ export default function NotificationsPanel() {
                     <input
                       type="email"
                       className="w-full sm:w-72 border border-gray-300 rounded-md shadow-sm focus:ring-gray-300 focus:ring-opacity-50 p-2 bg-gray-100 cursor-not-allowed"
-                      value="************"
+                      value="*********@gmail.com"
                       readOnly
                     />
                   </div>
@@ -241,3 +243,4 @@ export default function NotificationsPanel() {
   
   );
 }
+

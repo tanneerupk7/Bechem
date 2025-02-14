@@ -7,7 +7,7 @@ import pdf from "../assets/pdf.png";
 import DatePicker from "react-datepicker";
 import { FaFilter } from "react-icons/fa"; // Import Funnel icon
 import "react-datepicker/dist/react-datepicker.css";
-import HeaderForUsersDetails from "./HeaderForUsersDetails";
+import Header from "./HeaderForUsersDetails";
 import { FiDownload, } from "react-icons/fi";
 import Papa from "papaparse";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,6 +18,7 @@ import { Link, useLocation } from "react-router-dom";
 import UserIcon from "../assets/user.png";
 import BellIcon from "../assets/notification-bell.png";
 import headerImage from "../assets/bechemheader.jpeg"
+import HomeIcon from "../assets/home.svg";
 const UsersDetails = ({ accountName }) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -201,9 +202,10 @@ const UsersDetails = ({ accountName }) => {
   return (
     <>
       <div>
-      <header className="bg-customYellow flex justify-between max-h-20 ">
+{/*       
+      <header className="bg-customYellow flex flex-col md:flex-row justify-between items-center p-2 md:p-4 relative shadow-lg max-h-20">
         <div className="flex items-center space-x-4">
-         
+          
           <div className="flex flex-col">
             <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
             <span className="text-xs md:text-sm">Lubrication Technology</span>
@@ -225,9 +227,9 @@ const UsersDetails = ({ accountName }) => {
               onClick={toggleDropdown}
             />
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 md:w-48 bg-gray-100 rounded-lg shadow-lg z-50">
+              <div className="absolute right-0 mt-2 w-40 md:w-48 bg-gray-100 rounded-lg shadow-lg">
                 <ul className="flex flex-col">
-                <Link
+                  <Link
                     className="px-3 md:px-4 py-2 hover:bg-gray-200 rounded-lg"
                     to={"/Profile"}
                   >
@@ -252,11 +254,20 @@ const UsersDetails = ({ accountName }) => {
                 </ul>
               </div>
             )}
+            
           </div>
+          <Link to={"/Invoice_Table"}>
+            <img
+              className="cursor-pointer h-6 md:h-9"
+              src={HomeIcon}
+              alt="Notification Bell"
+            />
+          </Link>
           <img src={Logo} alt="Company Logo" className="h-12 md:h-20" />
+          
         </div>
-        
-      </header>
+      </header> */}
+      <Header />
 
       <div className="px-80">
         <nav className="w-full bg-gradient-to-r from-neutral-200 to-[#d9d9d9] shadow-m border px-10 py-4 rounded-br-full rounded-bl-full relative">
