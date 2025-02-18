@@ -2,7 +2,7 @@
 
 function Footer() {
   return (
-      <footer className="pr-6 pl-1 pt-4 pb-3   items-center ">
+      <footer className="pr-6 pl-3 pt-4 pb-3   items-center ">
         {/* Left Section */}
        
             <span className="text-gray-700" style={{fontSize:"0.700rem"}}>

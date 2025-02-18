@@ -11,6 +11,7 @@ import Header from "./Header";
 import { FiDownload } from "react-icons/fi";
 import Papa from "papaparse";
 import Filter from "../assets/filter.svg"
+import Footer from "./Footer";
 const InvoiceTable = ({ accountId }) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -18,7 +19,7 @@ const InvoiceTable = ({ accountId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const popupRef = useRef(null); // Reference for the popup
@@ -187,10 +188,9 @@ const InvoiceTable = ({ accountId }) => {
   }, []);
 
   return (
-    <>
-      <Header />
-      {/* <div className="bg-gray-100 min-h-screen p-2 md:p-4"> */}
-        <div className="bg-white rounded-lg w-full h-full p-4 md:p-6">
+    <div className="h-screen flex flex-col">
+      <Header className=""/>
+        <div className="bg-white rounded-lg flex-1 p-4 md:p-6">
           <div className="relative w-full md:w-1/4 ml-auto ">
             <div className="flex">
               <button
@@ -297,7 +297,8 @@ const InvoiceTable = ({ accountId }) => {
           <div className="flex justify-between items-center text-gray-700 text-sm mt-4">
             <p>
               Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredData.length)} to{" "}
-              {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries
+              {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries{" "}
+              {fromDate && toDate && ` for last 3 months`}
             </p>
             
             <div className="flex items-center gap-2">
@@ -349,23 +350,10 @@ const InvoiceTable = ({ accountId }) => {
               Next &gt;
             </button>
           </div>
-          </div>
-          <footer className="absolute bottom-5">
-            <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
-              Copyrights @2025 All rights reserved | Sales Order Gateway |
-            </span>
-              <a
-              href="https://www.bechemindia.com/"
-              className="text-yellow-600 font-medium hover:underline ml-1 hover:text-hoverBlue" 
-              style={{fontSize:"0.700rem"}}
-              target="_blank"
-            >
-              Bechem India
-            </a>
-            </footer>
-          </div>
-      {/* </div> */}
-    </>
+          </div>  
+        </div>
+      <Footer />
+    </div>
   );
 };
 

@@ -8,7 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { FiDownload } from "react-icons/fi";
 import Papa from "papaparse";
 import Header from "./Header";
-
+import Footer from "./Footer";
 
 const PurchaseOrderList = ({ accountId }) => {
   const [data, setData] = useState([]);
@@ -17,7 +17,7 @@ const PurchaseOrderList = ({ accountId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const popupRef = useRef(null);
   const API_URI = import.meta.env.VITE_API_URI;
@@ -164,9 +164,9 @@ const PurchaseOrderList = ({ accountId }) => {
   }, []);
 
   return (
-    <div>
+    <div className="h-screen flex flex-col">
       <Header />
-      <div className="bg-white rounded-lg w-full h-full p-4 md:p-6">
+      <div className="bg-white rounded-lg flex-1 p-4 md:p-6">
         <div className="relative w-full md:w-1/4 ml-auto">
           <div className="flex">
             <button
@@ -223,7 +223,6 @@ const PurchaseOrderList = ({ accountId }) => {
         <div className="overflow-x-auto mt-6" style={{ maxHeight: "500px", overflowY: "auto" }}>
           {/* <table className="table-auto w-full border-collapse border-b border-gray-300 text-xs border-l border-r"> */}
           <table className="table-auto w-full border-collapse border-b border-gray-300 text-xs border-l border-r">
-            
             <thead>
               <tr className="bg-tableHeaderColor border-b border-gray-300">
                 <th className="p-2 font-normal border-l border-gray-300" style={{ width: "8%" }}>PO Number</th>
@@ -328,7 +327,7 @@ const PurchaseOrderList = ({ accountId }) => {
             </button>
           </div>
         </div>
-          <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
+          {/* <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
             Copyrights @2025 All rights reserved | Sales Order Gateway |
           </span>
             <a
@@ -338,8 +337,10 @@ const PurchaseOrderList = ({ accountId }) => {
             target="_blank"
           >
             Bechem India
-          </a>
+          </a> */}
+          
     </div>
+    <Footer />
     </div>
   );
 };

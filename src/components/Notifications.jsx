@@ -1,19 +1,17 @@
+
+
+
 import { useState, useEffect } from "react";
-import Header from "./HeaderForUsersDetails";
-import { FaFilter } from "react-icons/fa"; // Import Funnel icon
-import { Link } from "react-router-dom";
-import ResetPasswordPopup from "./ResetPasswordPopup";
+import Header from "./HeaderForNotifications";
+import { FaFilter } from "react-icons/fa";
 import Footer from "./Footer";
-
-
-
-
+import { FaUserCircle } from 'react-icons/fa';
+import ResetPasswordPopup from './ResetPasswordPopup';
 
 export default function NotificationsPanel() {
-  
-  const [showResetPassword,setShowResetPassword] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [filter, setFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showResetPassword, setShowResetPassword] = useState(false);
   const [data, setData] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,226 +19,247 @@ export default function NotificationsPanel() {
   const API_URI = import.meta.env.VITE_API_URI;
 
   useEffect(() => {
-    console.log('Fetching from:', `${API_URI}/notifications`); // Log the full URL
-
     fetch(`${API_URI}/notifications`)
       .then((response) => {
-        console.log('Response status:', response.status); // Log response status
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then((data) => {
-        console.log('Received data:', data); // Log the received data
-        setData(data);
+      .then((responseData) => {
+        const notifications = Array.isArray(responseData.data) 
+          ? responseData.data 
+          : Array.isArray(responseData) 
+            ? responseData 
+            : [];
+
+        const sortedNotifications = [...notifications].sort((a, b) => {
+          return new Date(b.request_date) - new Date(a.request_date);
+        });
+        
+        setData(sortedNotifications);
+        if (sortedNotifications.length > 0) {
+          setSelectedNotification(sortedNotifications[0]);
+        }
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Fetch error:', error); // Log any errors
+        console.error('Fetch error:', error);
         setError(error.message);
         setLoading(false);
       });
   }, []);
 
-  console.log(data)
-  // const handleSave = () => {
-  //   // Handle save logic here
-  //   console.log("New Password:", newPassword);
-  //   console.log("Confirm Password:", confirmPassword);
-  // };
+  // Filter notifications based on current filters
+  const filteredNotifications = data.filter(notification => {
+    // First apply read/unread filter
+    if (filter === 'unread' && !notification.flag) {
+      return false;
+    }
 
+    // Then apply search query
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        notification.ac_name.toLowerCase().includes(searchLower) ||
+        notification.distributor_mailid.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return true;
+  });
+
+  // Format date helper function
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      return date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).replace(/\//g, '-');
+    }
+  };
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  };
 
   return (
-    <div>
-    <Header />
-    <div className="p-6">
-    <div className="flex space-x-2 max-w-5xl ml-5">
-          <button className="bg-yellow-500 text-white px-4 py-2 rounded">All</button>
-          <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded">Unread</button>
-          <div className="relative flex w-full items-center border rounded-xl">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full p-1.5 text-sm rounded outline-none "
-                />
-                <FaFilter
-                  className="absolute right-3 text-gray-500 cursor-pointer"
-                />
-          </div>
-          {/* <div>
-            <button className="bg-gray-50 flex">
-                <label for="data">Group by : Date</label>
-                <select >
-                <option>
-                  Pavan
-                </option>
-              </select>
-            </button>
-          </div> */}
-          <div className="inline-block relative">
-        <button className="flex items-center justify-between w-40 px-4 py-1 bg-gray-100 text-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-200">
-          Group by: Date
-          <svg className="w-4 h-4 ml-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      </div>
-
-          
-    </div>
-    <div className="flex p-4 " style={{ maxHeight: "550px", overflowY: "auto" }}>
-      {/* Sidebar */}
-      
-      <div className="w-1/3 bg-white border rounded-lg p-4 overflow-y-auto">
-       
-        <div className="">
-            {data?.map((item,index) => (
-              <div
-                key={index}
-                className={`p-3 rounded cursor-pointer ${
-                  selectedNotification?.id === item.id ? "bg-gray-200" : "hover:bg-gray-100"
+    <div className="h-screen flex flex-col bg-gray-100">
+      <Header />
+      <main className="flex-1 py-6">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Filter Section */}
+          <div className="flex space-x-4 mb-6">
+            {/* All/Unread Buttons */}
+            <div className="flex rounded-lg overflow-hidden bg-white border border-gray-200">
+              <button
+                className={`px-6 py-2 text-sm font-medium transition-colors ${
+                  filter === 'all' 
+                    ? 'bg-yellow-500 text-white' 
+                    : 'bg-white text-gray-700 hover:bg-gray-50'
                 }`}
-                onClick={() => setSelectedNotification(item)}
+                onClick={() => setFilter('all')}
               >
-                <p className="font-semibold text-gray-800">Request for Password Change</p>
-                <p className="text-sm text-gray-600">From: {item.name}</p>
-                <p className="text-sm text-gray-500">{item.message}</p>
-                <p className="text-xs text-gray-400">{item.date}</p>
-              </div>
-            ))}
-        </div>
-      </div>
+                All
+              </button>
+              <button
+                className={`px-6 py-2 text-sm font-medium transition-colors ${
+                  filter === 'unread' 
+                    ? 'bg-yellow-500 text-white' 
+                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
+                onClick={() => setFilter('unread')}
+              >
+                Unread
+              </button>
+            </div>
 
-      {/* Content Area */}
-      <div className="w-2/3 bg-white shadow rounded-lg p-6 ml-4">
-        <p className="font-semibold text-gray-800 text-lg">Request for Password Reset</p>
-        <p className="text-sm text-gray-600">From: {selectedNotification?.name}</p>
-        <p className="text-gray-700 mt-2">
-          A distributor wants to reset password of {selectedNotification?.name}, would you like to change password?
-        </p>
+            {/* Search Bar with Filter Icon */}
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                placeholder="Filter notifications"
+                className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <FaFilter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </div>
 
-            <button 
-              className="mt-4 bg-gray-500 text-white px-6 py-2 hover:bg-customYellow rounded"
-              onClick={() => setShowResetPassword(!showResetPassword)}
-            >
-              Reset
-            </button>
-           
-        <p className="text-xs text-gray-400 mt-2">{selectedNotification?.date} {selectedNotification?.time || ""}</p>
-      </div>
-    </div>
-    {/* <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
-        Copyrights @2025 All rights reserved | Sales Order Gateway |
-      </span>
-        <a
-        href="https://www.bechemindia.com/"
-        className="text-yellow-600 font-medium hover:underline ml-1 hover:text-hoverBlue" 
-        style={{fontSize:"0.700rem"}}
-        target="_blank"
-      >
-        Bechem India
-      </a> */}
-      <Footer />
-    </div>
-    
-    {showResetPassword && ( 
-              <div className="  flex justify-center absolute left-0 top-0 w-full items-center min-h-screen bg-black bg-opacity-80 px-4">
-              <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] relative" style={{ minHeight: "450px" }}>
-                {/* Header */}
-                <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">Reset Password</h2>
-                    <p className="text-gray-500" style={{ fontSize: "0.600rem" }}>
-                      Make changes to user profile here. Click save when you're done.
-                    </p>
-                  </div>
-                  <button 
-                  className="text-white hover:text-gray-300"
-                  onClick={() => setShowResetPassword(false)}
-                  >
-                    X
-                  </button>
-                </div>
-        
-                {/* Content */}
-                <div className="p-6 pl-24 pr-12 "style={{marginTop:"30px"}}>
-                  {/* User Name */}
-                  <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-medium mb-1">
-                      User Name
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full sm:w-72 border border-gray-300 rounded-md shadow-sm focus:ring-gray-300 focus:ring-opacity-50 p-2 bg-gray-100 cursor-not-allowed"
-                      value="Pavan1378"
-                      readOnly
-                    />
-                  </div>
-        
-                  {/* Mail ID */}
-                  <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-medium mb-1">
-                      Mail ID
-                    </label>
-                    <input
-                      type="email"
-                      className="w-full sm:w-72 border border-gray-300 rounded-md shadow-sm focus:ring-gray-300 focus:ring-opacity-50 p-2 bg-gray-100 cursor-not-allowed"
-                      value="*********@gmail.com"
-                      readOnly
-                    />
-                  </div>
-        
-                  {/* New Password and Confirm Password */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        New Password
-                      </label>
-                      <input
-                        type="password"
-                        placeholder="***************"
-                        className="w-full sm:w-72 border border-gray-300 rounded-md shadow-sm focus:ring-gray-300 focus:ring-opacity-50 p-2"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        Confirm Password
-                      </label>
-                      <input
-                        type="password"
-                        placeholder="***************"
-                        className="w-full sm:w-72 border border-gray-300 rounded-md shadow-sm focus:ring-gray-300 focus:ring-opacity-50 p-2"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                      />
-                    </div>
-                  </div>
-        
-                  {/* Buttons */}
-                  <div className="flex flex-col sm:flex-row justify-end sm:space-x-3 space-y-3 sm:space-y-0 "style={{marginTop:'40px'}}>
-                    <button 
-                      className="px-14 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-                      onClick={() => setShowResetPassword(false)}
+            {/* Group By Dropdown */}
+            <div className="relative">
+              <button className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+                <span className="text-sm text-gray-700">Group by: Date</span>
+                <svg 
+                  className="w-4 h-4 text-gray-500"
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Notifications Content */}
+          <div className="flex gap-4" style={{ maxHeight: "calc(100vh - 240px)" }}>
+            {/* Sidebar - Notification List */}
+            <div className="w-1/3 bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div className="p-4 space-y-4 overflow-y-auto" style={{ maxHeight: "calc(100vh - 240px)" }}>
+                {loading ? (
+                  <p className="text-gray-500 text-center py-4">Loading notifications...</p>
+                ) : error ? (
+                  <p className="text-red-500 text-center py-4">Error: {error}</p>
+                ) : filteredNotifications.length > 0 ? (
+                  filteredNotifications.map((item, index) => (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg cursor-pointer border border-gray-100 transition-all ${
+                        selectedNotification?.id === item.id 
+                          ? "bg-gray-100 border-gray-200" 
+                          : "hover:bg-gray-50"
+                      }`}
+                      onClick={() => setSelectedNotification(item)}
                     >
-                      Cancel
-                    </button>
-                    <button
-                      className="px-8 py-2 text-sm font-medium text-white bg-green-700 rounded-md hover:bg-green-800"
-                      // onClick={handleSave}
-                    >
-                      Save & Email
-                    </button>
-                  </div>
-                </div>
+                      <div className="flex items-start">
+                        <FaUserCircle className="text-gray-400 text-3xl mr-3 mt-1 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-1">
+                            <h3 className="font-medium text-gray-900 truncate">
+                              Request for Password Change
+                            </h3>
+                            <span className="text-sm text-gray-500 ml-2 flex-shrink-0">
+                              {formatDate(item.request_date)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-1">
+                            From: {item.ac_name}
+                          </p>
+                          <p className="text-sm text-gray-500 truncate">
+                            A distributor wants to reset password would you like to...
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-center py-4">No notifications found</p>
+                )}
               </div>
             </div>
-            // <ResetPasswordPopup />
-            )}
-  </div>
-  
+
+            {/* Content Area - Notification Detail */}
+            <div className="w-2/3 bg-white border border-gray-200 rounded-lg p-6">
+              {selectedNotification ? (
+                <div className="flex flex-col h-full">
+                  <div className="flex items-start mb-6">
+                    <FaUserCircle className="text-gray-400 text-4xl mr-4 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start">
+                        <h2 className="text-xl font-semibold text-gray-900 truncate">
+                          Request for Password Reset
+                        </h2>
+                        <span className="text-sm text-gray-500 ml-2 flex-shrink-0">
+                          {formatDate(selectedNotification.request_date)} {formatTime(selectedNotification.request_date)}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">
+                        From: {selectedNotification.ac_name}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-700 mb-6">
+                    A distributor wants to reset password of {selectedNotification.ac_name}, 
+                    would you like to change password?
+                  </p>
+
+                  <button 
+                    className="w-full max-w-[120px] bg-gray-500 text-white py-2 px-6 rounded-md hover:bg-gray-600 transition-colors"
+                    onClick={() => setShowResetPassword(true)}
+                  >
+                    Reset
+                  </button>
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center">Select a notification to view details</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+
+      {/* Reset Password Popup */}
+      {showResetPassword && (
+        <div className="w-screen h-screen absolute top-0 left-0">
+        <ResetPasswordPopup 
+          onClose={() => setShowResetPassword(false)}
+          selectedUser={selectedNotification}
+        />
+        </div>
+      )}
+    </div>
   );
 }
-

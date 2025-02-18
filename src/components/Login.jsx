@@ -82,39 +82,7 @@ export const Login = ({ setAccountId, setAccountName }) => {
   };
 
   
-  // ... existing code ...
-
-  // const handleSend = async (e) => {
-  //   e.preventDefault();
-  //   if (forgotPasswordUsername.trim() === "" || forgotPasswordMailId.trim() === "") {
-  //     alert("Please fill out both fields.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await fetch(`${API_URI}/forget_password`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         ac_name: forgotPasswordUsername,
-  //         email: forgotPasswordMailId,
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (response.ok && data.status === "success") {
-  //       setShowSuccessPopup(true);
-  //     } else {
-  //       setForgotPasswordError(data.message || "Failed to process request. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Forgot password error:", error);
-  //     setForgotPasswordError("An error occurred. Please try again.");
-  //   }
-  // }; 
+   
   const handleSend = async (e) => {
     e.preventDefault();
     if (forgotPasswordUsername.trim() === "" || forgotPasswordMailId.trim() === "") {
@@ -147,7 +115,10 @@ export const Login = ({ setAccountId, setAccountName }) => {
       console.error("Forgot password error:", error);
       setForgotPasswordError("An error occurred. Please try again.");
     } finally {
-      setIsForgotPasswordLoading(false); // Stop loading
+      setIsForgotPasswordLoading(false);
+      setFogotPasswordUsername("");
+      setFogotPasswordMailId("")
+       // Stop loading
     }
   };
 
@@ -166,7 +137,6 @@ export const Login = ({ setAccountId, setAccountName }) => {
 
   return (
     <div className="">
-      
       {(loading || isForgotPasswordLoading) && (
         <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
           <BlinkBlur 

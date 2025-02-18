@@ -10,6 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Header from "./Header";
 import { FiDownload } from "react-icons/fi";
 import Papa from "papaparse";
+import Footer from "./Footer";
 
 const SOGTable = ({ accountId }) => {
   const [data, setData] = useState([]);
@@ -130,9 +131,9 @@ const SOGTable = ({ accountId }) => {
   }, []);
 
   return (
-    <>
+    <div className="h-screen flex flex-col">
       <Header />
-      <div className="bg-white rounded-lg w-full h-full p-4 md:p-6">
+      <div className="bg-white rounded-lg flex-1 p-4 md:p-6 ">
         <div className="relative w-full md:w-1/4 ml-auto">
           <div className="flex">
             <button
@@ -250,7 +251,7 @@ const SOGTable = ({ accountId }) => {
             )}
           </div>
         </div>
-        <footer className="absolute bottom-5">
+        {/* <footer className="">
           <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
             Copyrights @2025 All rights reserved | Sales Order Gateway |
           </span>
@@ -262,9 +263,10 @@ const SOGTable = ({ accountId }) => {
           >
             Bechem India
           </a>
-          </footer>
+          </footer> */}
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 
