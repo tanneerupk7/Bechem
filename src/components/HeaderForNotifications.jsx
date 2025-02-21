@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import UserIcon from "../assets/user.png";
@@ -7,7 +6,7 @@ import Logo from "../assets/bechem-logo.png";
 import HomeIcon from "../assets/home.svg";
 import headerImage from "../assets/bechemheader.jpeg"
 
-const Header = () => {
+const Header = ({ accountName }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("");
   const [showAddNewUserPopup,setShowAddNewUserPopup]=useState(false);
@@ -61,22 +60,27 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-customYellow flex flex-col md:flex-row justify-between items-center p-2 md:p-4 relative  max-h-20">
-        <div className="flex items-center space-x-4">
-          
+      {/* Header Section */}
+      <header className="bg-customYellow flex justify-between max-h-20 relative ">
+        {/* Left Section: Logo and Company Name */}
+        <div className="flex items-center space-x-4 ml-2">
           <div className="flex flex-col">
             <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
             <span className="text-xs md:text-sm">Lubrication Technology</span>
           </div>
         </div>
+
+        {/* Right Section: Icons and Dropdown */}
         <div className="flex items-center space-x-4 mt-2 md:mt-0">
+          {/* Notification Bell Icon */}
           <Link to={"/Notifications"}>
-          <img
-            className="cursor-pointer h-6 md:h-9"
-            src={BellIcon}
-            alt="Notification Bell"
-          />
+            <img
+              className="cursor-pointer h-6 md:h-10"
+              src={BellIcon}
+              alt="Notification Bell"
+            />
           </Link>
+          {/* User Icon and Dropdown */}
           <div className="relative dropdown-container">
             <img
               className="cursor-pointer h-6 md:h-8"
@@ -95,18 +99,19 @@ const Header = () => {
                   </Link>
                   <Link
                     className="px-3 md:px-4 py-2 hover:bg-gray-200 rounded-lg"
-                    href="#UserDetails"
                     to={"/UsersDetails"}
                   >
                     User Details
                   </Link>
-                  <Link to={"/"} className="px-3 md:px-4 py-2 hover:bg-gray-200 rounded-lg">
+                  <Link
+                    to={"/"}
+                    className="px-3 md:px-4 py-2 hover:bg-gray-200 rounded-lg"
+                  >
                     Log Out
                   </Link>
                 </ul>
               </div>
             )}
-            
           </div>
           <Link to={"/Dashboard"}>
             <img
@@ -115,11 +120,10 @@ const Header = () => {
               alt="Notification Bell"
             />
           </Link>
+          {/* Company Logo */}
           <img src={Logo} alt="Company Logo" className="h-12 md:h-20" />
-          
         </div>
       </header>
-      
       
     </>
   );

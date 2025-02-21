@@ -1,14 +1,13 @@
-
-
-
 import { useState, useEffect } from "react";
 import Header from "./HeaderForNotifications";
 import { FaFilter } from "react-icons/fa";
 import Footer from "./Footer";
 import { FaUserCircle } from 'react-icons/fa';
 import ResetPasswordPopup from './ResetPasswordPopup';
-
-export default function NotificationsPanel() {
+import { useAuth } from "../contexts/AuthContext";
+import { BlinkBlur } from "react-loading-indicators";
+import UserIcon from "../assets/icons/Avatar.svg"
+export default function NotificationsPanel({ accountName }) {
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showResetPassword, setShowResetPassword] = useState(false);
@@ -16,6 +15,8 @@ export default function NotificationsPanel() {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  
   const API_URI = import.meta.env.VITE_API_URI;
 
   useEffect(() => {
@@ -91,6 +92,11 @@ export default function NotificationsPanel() {
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
+    
+    // Add 5 hours and 30 minutes (IST offset)
+    date.setHours(date.getHours() + 5);
+    date.setMinutes(date.getMinutes() + 30);
+
     return date.toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
@@ -98,30 +104,41 @@ export default function NotificationsPanel() {
     });
   };
 
+
+
   return (
     <div className="h-screen flex flex-col bg-gray-100">
-      <Header />
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
+          <BlinkBlur 
+            color="#FBB900"
+            size="large"
+          />
+          <p className="mt-4 text-white">Loading notifications...</p>
+        </div>
+      )}
+      <Header accountName={accountName} />
       <main className="flex-1 py-6">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Filter Section */}
-          <div className="flex space-x-4 mb-6">
+          {/* Filter Section - Made Responsive */}
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
             {/* All/Unread Buttons */}
             <div className="flex rounded-lg overflow-hidden bg-white border border-gray-200">
               <button
-                className={`px-6 py-2 text-sm font-medium transition-colors ${
+                className={`px-4 md:px-6 py-2 text-sm font-medium transition-colors ${
                   filter === 'all' 
                     ? 'bg-yellow-500 text-white' 
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                    : 'bg-gray-300 text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setFilter('all')}
               >
                 All
               </button>
               <button
-                className={`px-6 py-2 text-sm font-medium transition-colors ${
+                className={`px-4 md:px-6 py-2 text-sm font-medium transition-colors ${
                   filter === 'unread' 
                     ? 'bg-yellow-500 text-white' 
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                    : 'bg-gray-300 text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setFilter('unread')}
               >
@@ -143,7 +160,7 @@ export default function NotificationsPanel() {
 
             {/* Group By Dropdown */}
             <div className="relative">
-              <button className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+              <button className="w-full md:w-auto flex items-center justify-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
                 <span className="text-sm text-gray-700">Group by: Date</span>
                 <svg 
                   className="w-4 h-4 text-gray-500"
@@ -162,10 +179,10 @@ export default function NotificationsPanel() {
             </div>
           </div>
 
-          {/* Notifications Content */}
-          <div className="flex gap-4" style={{ maxHeight: "calc(100vh - 240px)" }}>
+          {/* Notifications Content - Made Responsive */}
+          <div className="flex flex-col md:flex-row gap-4" style={{ maxHeight: "calc(100vh - 240px)" }}>
             {/* Sidebar - Notification List */}
-            <div className="w-1/3 bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="w-full md:w-1/3 bg-white border-gray-700 rounded-lg  overflow-hidden ">
               <div className="p-4 space-y-4 overflow-y-auto" style={{ maxHeight: "calc(100vh - 240px)" }}>
                 {loading ? (
                   <p className="text-gray-500 text-center py-4">Loading notifications...</p>
@@ -177,13 +194,13 @@ export default function NotificationsPanel() {
                       key={index}
                       className={`p-4 rounded-lg cursor-pointer border border-gray-100 transition-all ${
                         selectedNotification?.id === item.id 
-                          ? "bg-gray-100 border-gray-200" 
+                          ? "bg-gray-200" 
                           : "hover:bg-gray-50"
                       }`}
                       onClick={() => setSelectedNotification(item)}
                     >
                       <div className="flex items-start">
-                        <FaUserCircle className="text-gray-400 text-3xl mr-3 mt-1 flex-shrink-0" />
+                        <img src={UserIcon}  className="mr-3 mt-1"/>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start mb-1">
                             <h3 className="font-medium text-gray-900 truncate">
@@ -210,11 +227,12 @@ export default function NotificationsPanel() {
             </div>
 
             {/* Content Area - Notification Detail */}
-            <div className="w-2/3 bg-white border border-gray-200 rounded-lg p-6">
+            <div className="w-full md:w-2/3 bg-white border border-gray-200 rounded-lg p-4 md:p-6">
               {selectedNotification ? (
                 <div className="flex flex-col h-full">
                   <div className="flex items-start mb-6">
-                    <FaUserCircle className="text-gray-400 text-4xl mr-4 flex-shrink-0" />
+                    {/* <FaUserCircle className="text-gray-400 text-4xl mr-4 flex-shrink-0" /> */}
+                    <img src={UserIcon} className="mr-4 mt-2"/>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start">
                         <h2 className="text-xl font-semibold text-gray-900 truncate">
@@ -230,13 +248,13 @@ export default function NotificationsPanel() {
                     </div>
                   </div>
                   
-                  <p className="text-gray-700 mb-6">
+                  <p className="text-gray-700 mb-6 pl-12">
                     A distributor wants to reset password of {selectedNotification.ac_name}, 
                     would you like to change password?
                   </p>
 
                   <button 
-                    className="w-full max-w-[120px] bg-gray-500 text-white py-2 px-6 rounded-md hover:bg-gray-600 transition-colors"
+                    className="w-full max-w-[120px] bg-gray-500 text-white py-2 px-6 rounded-md transition-colors mx-auto hover:bg-customYellow"
                     onClick={() => setShowResetPassword(true)}
                   >
                     Reset

@@ -43,7 +43,7 @@ const Header = () => {
   return (
     <>
       {/* Header Section */}
-      <header className="bg-customYellow flex justify-between max-h-20 relative z-50">
+      <header className="bg-customYellow flex justify-between max-h-20 relative ">
         {/* Left Section: Logo and Company Name */}
         <div className="flex items-center space-x-4 ml-2">
           <div className="flex flex-col">

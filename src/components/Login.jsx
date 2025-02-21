@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -10,10 +8,9 @@ import SuccessPopup from "./SuccessPopup";
 import Success from "../assets/Successful.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faFacebook,
-  faTwitter,
   faInstagram,
-  faYoutube,
+  faLinkedin,
+  
 } from "@fortawesome/free-brands-svg-icons";
 import BackgroundImage from "../assets/LandingScreen.svg"; // Add your background image path
 import headerImage from "../assets/bechemheader.jpeg";
@@ -99,7 +96,7 @@ export const Login = ({ setAccountId, setAccountName }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ac_name: forgotPasswordUsername,
+          username: forgotPasswordUsername,
           email: forgotPasswordMailId,
         }),
       });
@@ -149,116 +146,123 @@ export const Login = ({ setAccountId, setAccountName }) => {
         </div>
       )}
       <div
-        className="h-screen bg-cover bg-center flex flex-col justify-between"
+        className="h-screen bg-cover bg-center"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       >
-        {/* Login Form Section */}
-        <div className="flex items-center h-full justify-end c-lg:justify-end">
-          <div className="bg-white bg-opacity-45 backdrop-blur-lg rounded-2xl shadow-lg p-8 pb-20 w-[26rem] mr-20">
-            <h2 className="text-3xl font-bold text-gray-800 mb-1">Login</h2>
-            <p className="text-gray-600 mb-6">Welcome to BECHEM</p>
+        <div className="absolute inset-0 bg-gradient-to-l from-black/55 h-[93%] to-transparent">
+        </div>
+        <div className="h-full flex flex-col justify-between">
+          {/* Login Form Section */}
+          <div className="flex items-center h-full justify-center md:justify-end relative">
+            <div className="flex flex-col mx-4 md:mr-20 w-full max-w-[26rem]">
+              <div className="bg-white bg-opacity-45 backdrop-blur-lg rounded-2xl shadow-lg p-8 w-full">
+                <h2 className="text-3xl font-bold text-gray-800 mb-1">Login</h2>
+                <p className="text-gray-600 mb-6">Welcome to BECHEM</p>
 
-            {errorMessage && (
-              <div className="text-red-600 text-sm mb-4">{errorMessage}</div>
-            )}
+                {errorMessage && (
+                  <div className="text-red-600 text-sm mb-4">{errorMessage}</div>
+                )}
 
-            <form>
-              <label
-                htmlFor="user-id"
-                className="block text-gray-700 font-medium mb-2"
-              >
-                User ID
-              </label>
-              <input
-                type="text"
-                id="user-id"
-                placeholder="Enter user ID"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-2 h-11 placeholder-green-800 bg-white bg-opacity-0 backdrop-blur-lg rounded-xl mb-4 focus:outline-none"
-              />
+                <form>
+                  <label
+                    htmlFor="user-id"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
+                    User ID
+                  </label>
+                  <input
+                    type="text"
+                    id="user-id"
+                    placeholder="Enter user ID"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full px-4 py-2 h-11 placeholder-green-800 bg-white bg-opacity-0 border-gray-400 backdrop-blur-lg rounded-xl mb-4 focus:outline-none"
+                  />
 
-              <label
-                htmlFor="password"
-                className="block text-gray-700 font-medium mb-2"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 h-11 placeholder-green-800 bg-white bg-opacity-0 border-gray-400 backdrop-blur-lg rounded-xl mb-4 focus:outline-none"
-              />
+                  <label
+                    htmlFor="password"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-2 h-11 placeholder-green-800 bg-white bg-opacity-0 border-gray-400 backdrop-blur-lg rounded-xl mb-4 focus:outline-none"
+                  />
 
-              <div className="flex justify-end items-center mb-6">
+                  <div className="flex justify-end items-center mb-6">
+                    <button
+                      type="button"
+                      className="text-green-800 text-sm hover:underline hover:text-hoverBlue"
+                      onClick={() => setShowForgotPasswordPopup(true)}
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                </form>
+                
                 <button
-                  type="button"
-                  className="text-green-800 text-sm hover:underline hover:text-hoverBlue"
-                  onClick={() => setShowForgotPasswordPopup(true)}
+                  onClick={handleLogin}
+                  disabled={loading}
+                  className="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-customYellow transition duration-300 text-sm h-11"
                 >
-                  Forgot password?
+                  {loading ? "Logging in..." : "LOGIN"}
                 </button>
               </div>
-            </form>
-            
-            <button
-              onClick={handleLogin}
-              disabled={loading}
-              className="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-customYellow transition duration-300 text-sm h-11"
-            >
-              {loading ? "Logging in..." : "LOGIN"}
-            </button>
-          </div>
-        </div>
-        
-        {/* Footer Section */}
-        <footer className="pr-6 pl-1 pt-4 pb-3 flex justify-between items-center">
-          <div className="flex items-center bg-white bg-opacity-0">
-            <span className="text-gray-700" style={{ fontSize: "0.700rem" }}>
-              Copyrights @2025 All rights reserved | Sales Order Gateway |
-            </span>
-            <a
-              href="https://www.bechemindia.com/"
-              className="text-yellow-600 font-medium hover:underline ml-1 hover:text-hoverBlue"
-              style={{ fontSize: "0.700rem" }}
-              target="_blank"
-            >
-              Bechem India
-            </a>
-            <div className="flex space-x-4 ml-16">
-              <a href="#" className="text-gray-600 hover:text-blue-800 text-xl">
-                <FontAwesomeIcon icon={faFacebook} />
-              </a>
-              <a href="#" className="text-gray-600 hover:text-blue-400 text-xl">
-                <FontAwesomeIcon icon={faTwitter} />
-              </a>
-              <a href="#" className="text-gray-600 hover:text-pink-500 text-xl">
-                <FontAwesomeIcon icon={faInstagram} />
-              </a>
-              <a href="#" className="text-gray-600 hover:text-red-600 text-xl">
-                <FontAwesomeIcon icon={faYoutube} />
-              </a>
+
+              {/* Privacy Policy Links */}
+              <div className="flex justify-end mt-3 mr-5 space-x-2" style={{ fontSize: "0.700rem" }}>
+                <a
+                  href="https://www.bechemindia.com/privacy-policy/"
+                  className="text-yellow-600 hover:text-hoverBlue text-sm"
+                  target="_blank"
+                >
+                  Privacy Policy 
+                </a>
+                <span className="text-yellow-600">|</span>
+                <a
+                  href="https://www.bechemindia.com/disclaimer"
+                  className="text-yellow-600 hover:text-hoverBlue text-sm"
+                  target="_blanki"
+                >
+                  Disclaimer
+                </a>
+              </div>
             </div>
           </div>
-            <div className="mr-28">
-            <a
-              href="#"
-              className="text-yellow-600 font-medium text-xs hover:text-hoverBlue hover:underline"
-            >
-              Privacy Policy
-            </a>{" "}
-            |{" "}
-            <a
-              href="#"
-              className="text-yellow-600 font-medium text-xs hover:text-hoverBlue hover:underline"
-            >
-              Terms & Conditions
-            </a>
-          </div>
-        </footer>
+
+          {/* Footer Section */}
+          <footer className="pr-6 pl-1 pt-4 pb-3 flex justify-between items-center bg-white md:bg-transparent">
+            <div className="flex items-center">
+              <span className="text-gray-700" style={{ fontSize: "0.700rem" }}>
+                Copyrights @2025 All rights reserved | Sales Order Gateway |
+              </span>
+              <a
+                href="https://www.bechemindia.com/"
+                className="text-yellow-600 font-medium hover:underline ml-1 hover:text-hoverBlue"
+                style={{ fontSize: "0.700rem" }}
+                target="_blank"
+              >
+                Bechem India
+              </a>
+              <div className="flex space-x-4 ml-16">
+                
+              <a href="https://www.linkedin.com/company/bechem-india"
+              target="_blank" className="text-gray-600 hover:text-blue-800 text-xl ">
+                  <FontAwesomeIcon icon={faLinkedin} />
+                </a>
+                <a href="https://www.instagram.com/carlbechem_india/" 
+                target="_blank" className="text-gray-600 hover:text-pink-500 text-xl">
+                  <FontAwesomeIcon icon={faInstagram} />
+                </a>
+              </div>
+            </div>
+          </footer>
+        </div>
       </div>
 
       {showForgotPasswordPopup && (
@@ -278,7 +282,7 @@ export const Login = ({ setAccountId, setAccountName }) => {
               <div>
                 <h2 className="text-xl font-bold text-slate-900">Notify Admin</h2>
                 <p className="text-gray-500" style={{ fontSize: "0.600rem" }}>
-                  Enter the below fields here, click save when you’re done will notify admin.
+                  Enter the below fields here, click save when you're done will notify admin.
                 </p>
               </div>
               {/* Close Button (Cross Mark) */}
@@ -362,7 +366,7 @@ export const Login = ({ setAccountId, setAccountName }) => {
                   </button>
                   <button
                     type="submit"
-                    className="w-28 md:w-36 bg-green-700 hover:bg-green-800 text-white font-medium py-2 rounded-md"
+                    className="w-28 md:w-36 bg-greenButtonColor hover:bg-customYellow text-white font-medium py-2 rounded-md"
                     onClick={handleSend}
                   >
                     Send
@@ -374,8 +378,13 @@ export const Login = ({ setAccountId, setAccountName }) => {
         </div>
       )}
 
-      {showSuccessPopup && <SuccessPopup onClose={closeAllPopups} />}
-    </>
+      {showSuccessPopup && (
+        <SuccessPopup 
+          onClose={closeAllPopups} 
+          message="Notification sent to admin, please check your mail soon."
+        />
+      )}
+        </>
     // <ForgotPassword />
       )}
     </div>

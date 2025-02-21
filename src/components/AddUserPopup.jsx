@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-
-const AddUserPopup = () => {
+import headerImage from "../assets/bechemheader.jpeg";
+const AddUserPopup = ({ onClose }) => {
   const [userStatus, setUserStatus] = useState(false); // Toggle for Active/Inactive
   const [distributor, setDistributor] = useState(""); // Distributor value
   const [userName, setUserName] = useState(""); // User Name value
@@ -27,17 +26,23 @@ const AddUserPopup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-black bg-opacity-80 px-4">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] relative">
+    <div className="fixed inset-0 bg-black bg-opacity-80 z-50">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
         {/* Header */}
-        <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg">
+        {/* <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg"> */}
+        <div className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
+                  style={{
+                    backgroundImage: `url(${headerImage})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}>
           <div>
             <h2 className="text-xl font-bold text-slate-900">Add New User</h2>
             <p className="text-gray-500" style={{ fontSize: '0.600rem' }}>
               Add new user here. Click save when you're done.
             </p>
           </div>
-          <button className="text-white hover:text-gray-300">
+          <button className="text-white hover:text-gray-300" onClick={onClose}>
             <XMarkIcon className="w-5 h-5" />
           </button>
         </div>
@@ -168,13 +173,13 @@ const AddUserPopup = () => {
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row justify-end sm:space-x-3 space-y-3 sm:space-y-0">
             <button
-              className="px-14 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-              onClick={() => console.log("Cancelled")}
+              className="px-14 py-2 text-sm font-medium text-white bg-gray-300 rounded-md hover:bg-customYellow"
+              onClick={onClose}
             >
               Cancel
             </button>
             <button
-              className="px-14 py-2 text-sm font-medium text-white bg-green-700 rounded-md hover:bg-green-800"
+              className="px-14 py-2 text-sm font-medium text-white bg-greenButtonColor rounded-md hover:bg-customYellow"
               onClick={handleSave}
             >
               Save

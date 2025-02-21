@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useRef } from "react";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
@@ -12,6 +10,12 @@ import { FiDownload } from "react-icons/fi";
 import Papa from "papaparse";
 import Filter from "../assets/filter.svg"
 import Footer from "./Footer";
+import feedbackIcon from "../assets/icons/feedback.svg"
+import locationIcon from "../assets/icons/locationIcon.svg"
+import FeedbackPopup from "./FeedbackPopup"
+import { BlinkBlur } from "react-loading-indicators";
+import SuccessPopup from "./SuccessPopup";
+
 const InvoiceTable = ({ accountId }) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -24,19 +28,26 @@ const InvoiceTable = ({ accountId }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const popupRef = useRef(null); // Reference for the popup
   const API_URI = import.meta.env.VITE_API_URI;
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showNoDataPopup, setShowNoDataPopup] = useState(false);
 
   useEffect(() => {
     if (accountId) {
       const currentDate = new Date();
-      const threeMonthsAgo = new Date();
-      threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
+      const twoMonthsAgo = new Date();
+      twoMonthsAgo.setMonth(currentDate.getMonth() - 2);
   
-      setFromDate(String(formatDate(threeMonthsAgo))); // Correctly set fromDate
-      setToDate(String(formatDate(currentDate)));     // Correctly set toDate
+      setFromDate(String(formatDate(twoMonthsAgo)));
+      setToDate(String(formatDate(currentDate)));
   
       const fetchData = async () => {
+        setIsLoading(true); // Start loading
         try {
-          const response = await fetch(`${API_URI}/Invoice_details/`, {
+          const response = await fetch(`${API_URI}/invoice_details/`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -44,7 +55,7 @@ const InvoiceTable = ({ accountId }) => {
             body: JSON.stringify({
               ACID: accountId,
               search: "%",
-              from_date: fromDate, // Use correct fromDate
+              from_date: fromDate,
               to_date: toDate,
             }),
           });
@@ -54,6 +65,8 @@ const InvoiceTable = ({ accountId }) => {
         } catch (error) {
           console.error("Error fetching data:", error);
           setErrorMessage("An error occurred while fetching invoices.");
+        } finally {
+          setIsLoading(false); // Stop loading
         }
       };
   
@@ -72,13 +85,6 @@ const InvoiceTable = ({ accountId }) => {
     return date.toLocaleDateString("en-GB", options).replace(/ /g, "-");
   };
 
-  // const parseDateInput = (dateStr) => {
-  //   const [day, month, year] = dateStr.split("-");
-  //   if (!day || !month || !year) return "Invalid Date";
-  //   const formattedMonth = month[0].toUpperCase() + month.slice(1).toLowerCase();
-  //   const date = new Date(`${formattedMonth} ${day}, ${year}`);
-  //   return isNaN(date) ? "Invalid Date" : date;
-  // };
 
   const parseDateInput = (dateStr) => {
     if (!dateStr) return null;
@@ -169,6 +175,11 @@ const InvoiceTable = ({ accountId }) => {
   };
 
   const exportCSV = () => {
+    if (!filteredData || filteredData.length === 0) {
+      setShowNoDataPopup(true);
+      return;
+    }
+
     const csv = Papa.unparse(filteredData);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
@@ -178,6 +189,8 @@ const InvoiceTable = ({ accountId }) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    setShowSuccessPopup(true);
   };
 
   useEffect(() => {
@@ -187,19 +200,48 @@ const InvoiceTable = ({ accountId }) => {
     };
   }, []);
 
+  const handleFeedbackClick = (invoice) => {
+    setSelectedInvoice(invoice);
+    setShowFeedbackPopup(true);
+  };
+
+
+  //FeedbackPopup section content
+
+  
+
   return (
     <div className="h-screen flex flex-col">
+      {isLoading && (
+        <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
+          <BlinkBlur 
+            color="#FBB900"
+            size="large"
+          />
+          <p className="mt-4 text-white">Loading invoices...</p>
+        </div>
+      )}
       <Header className=""/>
         <div className="bg-white rounded-lg flex-1 p-4 md:p-6">
           <div className="relative w-full md:w-1/4 ml-auto ">
             <div className="flex">
-              <button
-                onClick={exportCSV}
-                className="flex items-center bg-gray-300 text-white px-3 py-2 rounded-md hover:bg-customYellow mr-2"
-              >
-                <FiDownload className="mr-2" />
-                Export
-              </button>
+              <div className="relative inline-block">
+                <button
+                  onMouseEnter={() => setShowTooltip(true)}
+                  onMouseLeave={() => setShowTooltip(false)}
+                  onClick={exportCSV}
+                  className="flex items-center bg-gray-300 text-white px-3 py-2 rounded-md hover:bg-customYellow mr-2"
+                >
+                  <FiDownload className="mr-2" />
+                  Export
+                </button>
+                
+                {showTooltip && (
+                  <div className="absolute z-50 w-48 px-2 py-1 -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded shadow-lg">
+                    Export invoice details to CSV file
+                  </div>
+                )}
+              </div>
               <div className="relative flex items-center border rounded-xl">
                 <input
                   type="text"
@@ -247,17 +289,17 @@ const InvoiceTable = ({ accountId }) => {
             {/* <table className="table-auto w-full border-collapse border-b border-gray-300 text-xs border-l border-r"> */}
             <table className="table-auto w-full border-collapse border-b border-gray-300 text-xs border-l border-r">
             <thead>
-                <tr className="bg-tableHeaderColor border-b border-gray-300">
-                  <th className="p-2 font-normal border-l border-gray-300" style={{ width: "8%" }}>Invoice No</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>Invoice Date</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>PO No</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>PO Date</th>
-                  <th className="p-2 font-normal" style={{ width: "10%" }}>Consignee</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>LR Number</th>
-                  <th className="p-2 font-normal" style={{ width: "10%" }}>Transporter</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>Transporter Code</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>Amount</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>Sales Tax No</th>
+                <tr className="bg-tableHeaderColor border-b text-left border-gray-300">
+                  <th className="p-2 font-normal text-left" style={{ width: "10%" }}>Invoice No</th>
+                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Invoice Date</th>
+                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>PO No</th>
+                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>PO Date</th>
+                  <th className="p-2 font-normal text-left" style={{ width: "10%" }}>Consignee</th>
+                  <th className="p-2 font-normal text-left" style={{ width: "10%" }}>LR Number</th>
+                  <th className="p-2 font-normal text-left" style={{ width: "10%" }}>Transporter</th>
+                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Trans Code</th>
+                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Amount</th>
+                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Sales Tax No</th>
                   {/* <th className="p-2 font-normal" style={{ width: "8%" }}>Delivered Status</th> */}
                   <th className="p-2 font-normal" style={{ width: "8%" }}>ETA</th>
                   <th className="p-2 font-normal" style={{ width: "8%" }}>Actuals</th>
@@ -267,19 +309,32 @@ const InvoiceTable = ({ accountId }) => {
               <tbody>
                 {currentData.map((data, index) => (
                   <tr key={index} className="hover:bg-gray-100 border-b border-gray-300">
-                    <td className="p-2 text-center border-l border-gray-300 overflow-hidden whitespace-nowrap">{data.inv_no}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.invDt}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.u_pono}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.u_podt}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Consignee}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.LRNumber}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Transporter}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.tran_cd}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Amount}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Sales_tax_No}</td>
-                    {/* <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.DELIVERED}</td> */}
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.EDD}</td>
-                    <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Actuals}</td>
+                    <td className="p-2 text-center border-l border-gray-300 overflow-hidden whitespace-nowrap flex">
+                      {data.inv_no}
+                      <img
+                        src={feedbackIcon}
+                        alt="Feedback Icon"
+                        className="h-5 mx-auto cursor-pointer pl-1"
+                        onClick={() => handleFeedbackClick(data)}
+                      />
+                    </td>
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap ">{data.invDt}
+                    </td>
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.u_pono}</td>
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.u_podt}</td>
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.Consignee}</td>
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap flex">{data.LRNumber} <img
+                        src={locationIcon}
+                        alt="PDF Icon"
+                        className="h-5 mx-auto cursor-pointer pl-1"
+                      /></td>
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.Transporter}</td>
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.tran_cd}</td>
+                    <td className="p-2 text-right overflow-hidden whitespace-nowrap">{data.Amount}</td>
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.Sales_tax_No}</td>
+                    {/* <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.DELIVERED}</td> */}
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.EDD}</td>
+                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.Actuals}</td>
                     <td className="p-2 text-center border-r border-gray-300">
                       <img
                         src={pdf}
@@ -298,7 +353,7 @@ const InvoiceTable = ({ accountId }) => {
             <p>
               Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredData.length)} to{" "}
               {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries{" "}
-              {fromDate && toDate && ` for last 3 months`}
+              {fromDate && toDate && ` for last 2 months`}
             </p>
             
             <div className="flex items-center gap-2">
@@ -353,8 +408,34 @@ const InvoiceTable = ({ accountId }) => {
           </div>  
         </div>
       <Footer />
+      {showSuccessPopup && (
+        <SuccessPopup 
+          onClose={() => setShowSuccessPopup(false)} 
+          message="Exported the invoice details successfully"
+        />
+      )}
+      {showNoDataPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
+            <div className="flex flex-col items-center">
+              <div className="mb-4 text-center">
+                <h3 className="text-lg font-medium text-gray-900">No Data Available</h3>
+                <p className="text-sm text-gray-500 mt-2">
+                  There is no data available to export at this moment.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowNoDataPopup(false)}
+                className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  );
+  ); 
 };
 
 export default InvoiceTable;

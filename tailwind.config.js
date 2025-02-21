@@ -8,6 +8,9 @@ export default {
   theme: {
     
     extend: {
+      animation: {
+        bounce: 'bounce 1s infinite'
+      },
       screens: {
         'c-sm' : '640px',
         'c-md' : '768px',
@@ -28,11 +31,13 @@ export default {
         'exportButtonColor':"#CBCBCB",
         'paginationColor':"#F1F5F9",
         'poListPONumberColor':"#015397",
-        'greeenButtonColor':"#15460B",
+        'greenButtonColor':"#15460B",
       },
     },
     
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar-hide')
+  ],
 }
 

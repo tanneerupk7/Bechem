@@ -9,6 +9,8 @@ import { FiDownload } from "react-icons/fi";
 import Papa from "papaparse";
 import Header from "./Header";
 import Footer from "./Footer";
+import { BlinkBlur } from "react-loading-indicators";
+import SuccessPopup from "./SuccessPopup";
 
 const PurchaseOrderList = ({ accountId }) => {
   const [data, setData] = useState([]);
@@ -21,8 +23,10 @@ const PurchaseOrderList = ({ accountId }) => {
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const popupRef = useRef(null);
   const API_URI = import.meta.env.VITE_API_URI;
-
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showNoDataPopup, setShowNoDataPopup] = useState(false);
 
   useEffect(() => {
     if (accountId) {
@@ -30,12 +34,13 @@ const PurchaseOrderList = ({ accountId }) => {
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
   
-      setFromDate(String(formatDate(threeMonthsAgo))); // Correctly set fromDate
-      setToDate(String(formatDate(currentDate)));      // Correctly set toDate
+      setFromDate(String(formatDate(threeMonthsAgo)));
+      setToDate(String(formatDate(currentDate)));
   
       const fetchData = async () => {
+        setIsLoading(true); // Start loading
         try {
-          const response = await fetch(`${API_URI}/po-list/`, {
+          const response = await fetch(`${API_URI}/po_list/`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -43,17 +48,18 @@ const PurchaseOrderList = ({ accountId }) => {
             body: JSON.stringify({
               ACID: accountId,
               search: "%",
-              from_date: fromDate, // Use correct fromDate
+              from_date: fromDate,
               to_date: toDate,
             }),
           });
   
           const result = await response.json();
-          console.log("Fetched Data:", result);
           setData(result);
         } catch (error) {
           console.error("Error fetching data:", error);
           setErrorMessage("An error occurred while fetching invoices.");
+        } finally {
+          setIsLoading(false); // Stop loading
         }
       };
   
@@ -139,6 +145,11 @@ const PurchaseOrderList = ({ accountId }) => {
   };
 
   const exportCSV = () => {
+    if (!filteredData || filteredData.length === 0) {
+      setShowNoDataPopup(true);
+      return;
+    }
+
     const csv = Papa.unparse(filteredData);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
@@ -148,6 +159,8 @@ const PurchaseOrderList = ({ accountId }) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    setShowSuccessPopup(true);
   };
 
   const handleOutsideClick = (event) => {
@@ -165,17 +178,36 @@ const PurchaseOrderList = ({ accountId }) => {
 
   return (
     <div className="h-screen flex flex-col">
+      {isLoading && (
+        <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
+          <BlinkBlur 
+            color="#FBB900"
+            size="large"
+          />
+          <p className="mt-4 text-white">Loading purchase orders...</p>
+        </div>
+      )}
       <Header />
       <div className="bg-white rounded-lg flex-1 p-4 md:p-6">
         <div className="relative w-full md:w-1/4 ml-auto">
           <div className="flex">
-            <button
-              onClick={exportCSV}
-              className="flex items-center bg-gray-300 text-white px-3 py-2 rounded-md hover:bg-customYellow mr-2"
-            >
-              <FiDownload className="mr-2" />
-              Export
-            </button>
+            <div className="relative inline-block">
+              <button
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                onClick={exportCSV}
+                className="flex items-center bg-gray-300 text-white px-3 py-2 rounded-md hover:bg-customYellow mr-2"
+              >
+                <FiDownload className="mr-2" />
+                Export
+              </button>
+              
+              {showTooltip && (
+                <div className="absolute z-50 w-48 px-2 py-1 -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded shadow-lg">
+                  Export purchase order details to CSV file
+                </div>
+              )}
+            </div>
             <div className="relative flex items-center border rounded-xl">
               <input
                 type="text"
@@ -225,38 +257,38 @@ const PurchaseOrderList = ({ accountId }) => {
           <table className="table-auto w-full border-collapse border-b border-gray-300 text-xs border-l border-r">
             <thead>
               <tr className="bg-tableHeaderColor border-b border-gray-300">
-                <th className="p-2 font-normal border-l border-gray-300" style={{ width: "8%" }}>PO Number</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>PO Date</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>Sales Order No</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>Sales Order Date</th>
-                <th className="p-2 font-normal" style={{ width: "10%" }}>Consignee</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>Order Amount</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>Tax Amount</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>Order Status</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>Stock Allocation</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>Shipment Status</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>Account Status</th>
-                <th className="p-2 font-normal" style={{ width: "8%" }}>Invoices</th>
+                <th className="p-2 font-normal border-l border-gray-300 text-left" style={{ width: "8%" }}>PO Number</th>
+                <th className="p-2 font-normal text-left " style={{ width: "8%" }}>PO Date</th>
+                <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Sales Order No</th>
+                <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Sales Order Date</th>
+                <th className="p-2 font-normal text-left" style={{ width: "10%" }}>Consignee</th>
+                <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Order Amount</th>
+                <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Tax Amount</th>
+                <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Order Status</th>
+                <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Stock Allocation</th>
+                <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Shipment Status</th>
+                <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Account Status</th>
+                <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Invoices</th>
               </tr>
             </thead>
             
             <tbody>
             {currentData.map((data, index) => (
               <tr key={index} className="hover:bg-gray-100 border-b border-gray-300">
-                <td className="p-2 text-center border-l border-gray-300 overflow-hidden whitespace-nowrap">
+                <td className="p-2 text-center border-l border-gray-300 overflow-hidden whitespace-nowrap ">
                   <a href="#" className="text-poListPONumberColor">{data.u_pono}</a>
                 </td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.PODt}</td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.OrderNo}</td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.OrderDt}</td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Consignee}</td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.Amount}</td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.taxamt}</td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.order_status}</td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.StkAllocation}</td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.ShipmentStatus}</td>
-                <td className="p-2 text-center overflow-hidden whitespace-nowrap">{data.AccStatus}</td>
-                <td className="p-2 text-center">
+                <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.PODt}</td>
+                <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.OrderNo}</td>
+                <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.OrderDt}</td>
+                <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.Consignee}</td>
+                <td className="p-2 text-right overflow-hidden whitespace-nowrap">{data.Amount}</td>
+                <td className="p-2 text-right overflow-hidden whitespace-nowrap">{data.taxamt}</td>
+                <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.order_status}</td>
+                <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.StkAllocation}</td>
+                <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.ShipmentStatus}</td>
+                <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.AccStatus}</td>
+                <td className="p-2 text-left">
                   <img
                     src={pdf}
                     alt="PDF Icon"
@@ -327,20 +359,34 @@ const PurchaseOrderList = ({ accountId }) => {
             </button>
           </div>
         </div>
-          {/* <span className="text-gray-700" style={{fontSize:"0.700rem"}}>
-            Copyrights @2025 All rights reserved | Sales Order Gateway |
-          </span>
-            <a
-            href="https://www.bechemindia.com/"
-            className="text-yellow-600 font-medium hover:underline ml-1 hover:text-hoverBlue" 
-            style={{fontSize:"0.700rem"}}
-            target="_blank"
-          >
-            Bechem India
-          </a> */}
-          
     </div>
     <Footer />
+    {showSuccessPopup && (
+      <SuccessPopup 
+        onClose={() => setShowSuccessPopup(false)} 
+        message="Exported the purchase order details successfully"
+      />
+    )}
+    {showNoDataPopup && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
+          <div className="flex flex-col items-center">
+            <div className="mb-4 text-center">
+              <h3 className="text-lg font-medium text-gray-900">No Data Available</h3>
+              <p className="text-sm text-gray-500 mt-2">
+                There is no data available to export at this moment.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowNoDataPopup(false)}
+              className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import Success from "../assets/Successful.png";
 
-const SuccessPopup = ({ onClose },props) => {
+const SuccessPopup = ({ onClose, message }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
       <div className="bg-white rounded-lg shadow-lg p-4 w-96 text-center relative">
@@ -23,13 +23,13 @@ const SuccessPopup = ({ onClose },props) => {
           <div className="text-left">
             <h3 className="text-lg font-bold text-gray-800">Successful</h3>
             <p className="text-sm text-gray-600">
-            Notification send to admin, please check your mail soon.
+              {message}
             </p>
           </div>
         </div>
         {/* OK button */}
         <button
-          className="w-36 py-2 bg-green-900 text-white rounded-md hover:bg-green-900 text-sm font-medium"
+          className="w-36 py-2 bg-greenButtonColor text-white rounded-md hover:bg-customYellow text-sm font-medium"
           onClick={onClose}
         >
           OK

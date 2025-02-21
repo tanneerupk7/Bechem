@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BlinkBlur } from 'react-loading-indicators';
 import HeaderImage from "../assets/bechemheader.jpeg"
+import SuccessPopup from "./SuccessPopup";
 const ResetPasswordPopup = ({ onClose, selectedUser }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,7 +33,7 @@ const ResetPasswordPopup = ({ onClose, selectedUser }) => {
 
       setIsLoading(true);
 
-      const response = await fetch(`${API_URI}/reset-mail/`, {
+      const response = await fetch(`${API_URI}/reset_mail/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,6 +63,11 @@ const ResetPasswordPopup = ({ onClose, selectedUser }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const closeAllPopups = () => {
+    setIsOpen(false);
+    setShowSuccess(false);
   };
 
   return (
@@ -161,14 +167,14 @@ const ResetPasswordPopup = ({ onClose, selectedUser }) => {
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row justify-end sm:space-x-3 space-y-3 sm:space-y-0" style={{marginTop:'40px'}}>
               <button 
-                className="px-14 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                className="px-14 py-2 text-sm font-medium bg-gray-300 rounded-md hover:bg-customYellow text-white disabled:opacity-50"
                 onClick={onClose}
                 disabled={isLoading}
               >
                 Cancel
               </button>
               <button
-                className="px-8 py-2 text-sm font-medium text-white bg-green-700 rounded-md hover:bg-green-800 disabled:opacity-50 flex items-center justify-center"
+                className="px-8 py-2 text-sm font-medium text-white bg-greenButtonColor rounded-md hover:bg-customYellow disabled:opacity-50 flex items-center justify-center"
                 onClick={handleSave}
                 disabled={isLoading}
               >
@@ -197,32 +203,10 @@ const ResetPasswordPopup = ({ onClose, selectedUser }) => {
 
       {/* Success Popup */}
       {showSuccess && (
-        // <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
-        //   <div className="bg-white rounded-lg p-6 flex flex-col items-center">
-        //     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-        //       <svg 
-        //         className="w-8 h-8 text-green-500" 
-        //         fill="none" 
-        //         stroke="currentColor" 
-        //         viewBox="0 0 24 24"
-        //       >
-        //         <path 
-        //           strokeLinecap="round" 
-        //           strokeLinejoin="round" 
-        //           strokeWidth={2} 
-        //           d="M5 13l4 4L19 7" 
-        //         />
-        //       </svg>
-        //     </div>
-        //     <h3 className="text-lg font-medium text-gray-900 mb-2">
-        //       Success!
-        //     </h3>
-        //     <p className="text-gray-500">
-        //       Password has been reset successfully
-        //     </p>
-        //   </div>
-        // </div>
-        <SuccessPopup onClose={closeAllPopups} />
+        <SuccessPopup 
+        onClose={closeAllPopups} 
+        message="Password updated, email sent to user successfully."
+        />
       )}
     </>
   );
