@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import headerImage from "../assets/bechemheader.jpeg";
+import axios from 'axios';
+
 const AddUserPopup = ({ onClose }) => {
   const [userStatus, setUserStatus] = useState(false); // Toggle for Active/Inactive
   const [distributor, setDistributor] = useState(""); // Distributor value
@@ -10,6 +12,23 @@ const AddUserPopup = ({ onClose }) => {
   const [mailId, setMailId] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [distributorList, setDistributorList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const API_URI = import.meta.env.VITE_API_URI;
+
+  useEffect(() => {
+    const fetchDistributors = async () => {
+      try {
+        const response = await axios.get(`${API_URI}/distributors/`);
+        const distributors = response.data.distributors.map(name => name.trim());
+        setDistributorList(distributors);
+      } catch (error) {
+        console.error("Failed to fetch distributors:", error);
+      }
+    };
+
+    fetchDistributors();
+  }, []);
 
   const handleSave = () => {
     // Handle save logic here
@@ -84,9 +103,11 @@ const AddUserPopup = ({ onClose }) => {
               onChange={(e) => setDistributor(e.target.value)}
             >
               <option value="">Select a distributor</option>
-              <option value="Distributor 1">Distributor 1</option>
-              <option value="Distributor 2">Distributor 2</option>
-              <option value="Distributor 3">Distributor 3</option>
+              {distributorList.map((dist, index) => (
+                <option key={index} value={dist}>
+                  {dist}
+                </option>
+              ))}
             </select>
           </div>
 

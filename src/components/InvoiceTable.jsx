@@ -8,13 +8,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import Header from "./Header";
 import { FiDownload } from "react-icons/fi";
 import Papa from "papaparse";
-import Filter from "../assets/filter.svg"
+import Filter from "../assets/filter.svg";
 import Footer from "./Footer";
-import feedbackIcon from "../assets/icons/feedback.svg"
-import locationIcon from "../assets/icons/locationIcon.svg"
-import FeedbackPopup from "./FeedbackPopup"
+import feedbackIcon from "../assets/icons/feedback.svg";
+import locationIcon from "../assets/icons/locationIcon.svg";
+import FeedbackPopup from "./FeedbackPopup";
 import { BlinkBlur } from "react-loading-indicators";
 import SuccessPopup from "./SuccessPopup";
+import ConsignmentDetailsPopup from "./ConsignmentDetailsPopup";
 
 const InvoiceTable = ({ accountId }) => {
   const [data, setData] = useState([]);
@@ -35,16 +36,18 @@ const InvoiceTable = ({ accountId }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [showNoDataPopup, setShowNoDataPopup] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [showConsignmentPopup, setShowConsignmentPopup] = useState(false);
+  const [selectedLRNumber, setSelectedLRNumber] = useState(null);
 
   useEffect(() => {
     if (accountId) {
       const currentDate = new Date();
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
-  
+
       setFromDate(String(formatDate(threeMonthsAgo)));
       setToDate(String(formatDate(currentDate)));
-  
+
       const fetchData = async () => {
         setIsLoading(true); // Start loading
         try {
@@ -60,7 +63,7 @@ const InvoiceTable = ({ accountId }) => {
               to_date: toDate,
             }),
           });
-  
+
           const result = await response.json();
           setData(result);
         } catch (error) {
@@ -70,12 +73,10 @@ const InvoiceTable = ({ accountId }) => {
           setIsLoading(false); // Stop loading
         }
       };
-  
+
       fetchData();
     }
   }, [accountId]);
-  
-
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.trim());
@@ -86,31 +87,39 @@ const InvoiceTable = ({ accountId }) => {
     return date.toLocaleDateString("en-GB", options).replace(/ /g, "-");
   };
 
-
   const parseDateInput = (dateStr) => {
     if (!dateStr) return null;
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     const [day, monthAbbr, year] = dateStr.split("-");
     const monthIndex = months.indexOf(monthAbbr);
     if (monthIndex === -1 || !day || !year) return null;
     return new Date(year, monthIndex, day);
   };
-  
-
-
 
   const handleFilterByDate = (data) => {
-  const itemDate = parseDateInput(data.invDt); // Use the correct date field
-  const from = fromDate ? parseDateInput(fromDate) : null;
-  const to = toDate ? parseDateInput(toDate) : null;
+    const itemDate = parseDateInput(data.invDt); // Use the correct date field
+    const from = fromDate ? parseDateInput(fromDate) : null;
+    const to = toDate ? parseDateInput(toDate) : null;
 
-  if (!itemDate) return false; // Ignore invalid dates
-  if (from && itemDate < from) return false;
-  if (to && itemDate > to) return false;
+    if (!itemDate) return false; // Ignore invalid dates
+    if (from && itemDate < from) return false;
+    if (to && itemDate > to) return false;
 
-  return true;
-};
-
+    return true;
+  };
 
   useEffect(() => {
     const filtered = data.filter((data) => {
@@ -138,8 +147,8 @@ const InvoiceTable = ({ accountId }) => {
 
   const downloadPDF = (data) => {
     if (!data) {
-        console.error("No data available for PDF generation");
-        return;
+      console.error("No data available for PDF generation");
+      return;
     }
 
     const doc = new jsPDF();
@@ -162,12 +171,11 @@ const InvoiceTable = ({ accountId }) => {
         ["Delivered Status", data.DELIVERED || "N/A"],
         ["Feedback Status", data.FEEDBACK || "N/A"],
         ["Expected Delivery Date", data.EDD || "N/A"],
-        ["Actuals", data.Actuals || "N/A"]
+        ["Actuals", data.Actuals || "N/A"],
       ],
     });
     doc.save(`Invoice_${data.inv_no || "Unknown"}.pdf`);
-};
-
+  };
 
   const handleOutsideClick = (event) => {
     if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -190,7 +198,7 @@ const InvoiceTable = ({ accountId }) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     setShowSuccessPopup(true);
   };
 
@@ -211,156 +219,259 @@ const InvoiceTable = ({ accountId }) => {
     setSelectedInvoice(null);
   };
 
+  const handleLocationClick = (lrNumber) => {
+    setSelectedLRNumber(lrNumber);
+    setShowConsignmentPopup(true);
+  };
+
   return (
     <div className="h-screen flex flex-col">
       {isLoading && (
         <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
-          <BlinkBlur 
-            color="#FBB900"
-            size="large"
-          />
+          <BlinkBlur color="#FBB900" size="large" />
           <p className="mt-4 text-white">Loading invoices...</p>
         </div>
       )}
-      <Header className=""/>
-        <div className="bg-white rounded-lg flex-1 p-4 md:p-6">
-          <div className="relative w-full md:w-1/4 ml-auto ">
-            <div className="flex">
-              <div className="relative inline-block">
-                <button
-                  onMouseEnter={() => setShowTooltip(true)}
-                  onMouseLeave={() => setShowTooltip(false)}
-                  onClick={exportCSV}
-                  className="flex items-center bg-gray-300 text-white px-3 py-2 rounded-md hover:bg-customYellow mr-2"
-                >
-                  <FiDownload className="mr-2" />
-                  Export
-                </button>
-                
-                {showTooltip && (
-                  <div className="absolute z-50 w-48 px-2 py-1 -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded shadow-lg">
-                    Export invoice details to CSV file
-                  </div>
-                )}
-              </div>
-              <div className="relative flex items-center border rounded-xl">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full p-1.5 text-sm rounded outline-none pr-8"
-                  onChange={handleSearch}
+      <Header className="" />
+      <div className="bg-white rounded-lg flex-1 p-4 md:p-6">
+        <div className="relative w-full md:w-1/4 ml-auto ">
+          <div className="flex">
+            <div className="relative inline-block">
+              <button
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                onClick={exportCSV}
+                className="flex items-center bg-gray-300 text-white px-3 py-2 rounded-md hover:bg-customYellow mr-2"
+              >
+                <FiDownload className="mr-2" />
+                Export
+              </button>
+
+              {showTooltip && (
+                <div className="absolute z-50 w-48 px-2 py-1 -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded shadow-lg">
+                  Export invoice details to CSV file
+                </div>
+              )}
+            </div>
+            <div className="relative flex items-center border rounded-xl">
+              <input
+                type="text"
+                placeholder="Search"
+                className="w-full p-1.5 text-sm rounded outline-none pr-8"
+                onChange={handleSearch}
+              />
+              <img
+                src={Filter}
+                alt="Filter Icon"
+                onClick={() => setShowFilterPopup(!showFilterPopup)}
+              />
+            </div>
+          </div>
+
+          {showFilterPopup && (
+            <div
+              ref={popupRef}
+              className="absolute top-full mt-2 right-0 bg-white shadow-lg p-4 rounded-lg z-10 w-80"
+            >
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  From Date:
+                </label>
+                <DatePicker
+                  selected={fromDate ? new Date(fromDate) : null}
+                  onChange={(date) => setFromDate(formatDate(date))}
+                  className="border p-2 rounded w-full"
+                  dateFormat="dd-MMM-yyyy"
+                  placeholderText="Select a date"
                 />
-                <img src={Filter} alt="Filter Icon" 
-                  onClick={() => setShowFilterPopup(!showFilterPopup)}
-                  />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  To Date:
+                </label>
+                <DatePicker
+                  selected={toDate ? new Date(toDate) : null}
+                  onChange={(date) => setToDate(formatDate(date))}
+                  className="border p-2 rounded w-full"
+                  dateFormat="dd-MMM-yyyy"
+                  placeholderText="Select a date"
+                />
               </div>
             </div>
+          )}
+        </div>
 
-            {showFilterPopup && (
-              <div
-                ref={popupRef}
-                className="absolute top-full mt-2 right-0 bg-white shadow-lg p-4 rounded-lg z-10 w-80"
-              >
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">From Date:</label>
-                  <DatePicker
-                    selected={fromDate ? new Date(fromDate) : null}
-                    onChange={(date) => setFromDate(formatDate(date))}
-                    className="border p-2 rounded w-full"
-                    dateFormat="dd-MMM-yyyy"
-                    placeholderText="Select a date"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">To Date:</label>
-                  <DatePicker
-                    selected={toDate ? new Date(toDate) : null}
-                    onChange={(date) => setToDate(formatDate(date))}
-                    className="border p-2 rounded w-full"
-                    dateFormat="dd-MMM-yyyy"
-                    placeholderText="Select a date"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* <div className="overflow-x-auto mt-6"> */}
-          <div className="overflow-x-auto mt-6" style={{ maxHeight: "500px", overflowY: "auto" }}>
-            {/* <table className="table-auto w-full border-collapse border-b border-gray-300 text-xs border-l border-r"> */}
-            <table className="table-auto w-full border-collapse border-b border-gray-300 text-xs border-l border-r">
+        {/* <div className="overflow-x-auto mt-6"> */}
+        <div
+          className="overflow-x-auto mt-6"
+          style={{ maxHeight: "500px", overflowY: "auto" }}
+        >
+          {/* <table className="table-auto w-full border-collapse border-b border-gray-300 text-xs border-l border-r"> */}
+          <table className="table-auto w-full border-collapse border-b border-gray-300 text-xs border-l border-r">
             <thead>
-                <tr className="bg-tableHeaderColor border-b text-left border-gray-300">
-                  <th className="p-2 font-normal text-left" style={{ width: "10%" }}>Invoice No</th>
-                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Invoice Date</th>
-                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>PO No</th>
-                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>PO Date</th>
-                  <th className="p-2 font-normal text-left" style={{ width: "10%" }}>Consignee</th>
-                  <th className="p-2 font-normal text-left" style={{ width: "10%" }}>LR Number</th>
-                  <th className="p-2 font-normal text-left" style={{ width: "10%" }}>Transporter</th>
-                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Trans Code</th>
-                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Amount</th>
-                  <th className="p-2 font-normal text-left" style={{ width: "8%" }}>Sales Tax No</th>
-                  {/* <th className="p-2 font-normal" style={{ width: "8%" }}>Delivered Status</th> */}
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>ETA</th>
-                  <th className="p-2 font-normal" style={{ width: "8%" }}>Actuals</th>
-                  <th className="p-2 font-normal border-r border-gray-300" style={{ width: "8%" }}>Invoice</th>
+              <tr className="bg-tableHeaderColor border-b text-left border-gray-300">
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "10%" }}
+                >
+                  Invoice No
+                </th>
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "8%" }}
+                >
+                  Invoice Date
+                </th>
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "8%" }}
+                >
+                  PO No
+                </th>
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "8%" }}
+                >
+                  PO Date
+                </th>
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "10%" }}
+                >
+                  Consignee
+                </th>
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "10%" }}
+                >
+                  LR Number
+                </th>
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "10%" }}
+                >
+                  Transporter
+                </th>
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "8%" }}
+                >
+                  Trans Code
+                </th>
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "8%" }}
+                >
+                  Amount
+                </th>
+                <th
+                  className="p-2 font-normal text-left"
+                  style={{ width: "8%" }}
+                >
+                  Sales Tax No
+                </th>
+                {/* <th className="p-2 font-normal" style={{ width: "8%" }}>Delivered Status</th> */}
+                <th className="p-2 font-normal" style={{ width: "8%" }}>
+                  ETA
+                </th>
+                <th className="p-2 font-normal" style={{ width: "8%" }}>
+                  Actuals
+                </th>
+                <th
+                  className="p-2 font-normal border-r border-gray-300"
+                  style={{ width: "8%" }}
+                >
+                  Invoice
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentData.map((data, index) => (
+                <tr
+                  key={index}
+                  className="hover:bg-gray-100 border-b border-gray-300"
+                >
+                  <td className="p-2 text-center border-l border-gray-300 overflow-hidden whitespace-nowrap flex">
+                    {data.inv_no}
+                    <img
+                      src={feedbackIcon}
+                      alt="Feedback Icon"
+                      className="h-5 mx-auto cursor-pointer pl-1"
+                      onClick={() => handleFeedbackClick(data)}
+                    />
+                  </td>
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap ">
+                    {data.invDt}
+                  </td>
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap">
+                    {data.u_pono}
+                  </td>
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap">
+                    {data.u_podt}
+                  </td>
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap">
+                    {data.Consignee}
+                  </td>
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap flex">
+                    {data.LRNumber}{" "}
+                    <img
+                      src={locationIcon}
+                      alt="Location Icon"
+                      className="h-5 mx-auto cursor-pointer pl-1"
+                      onClick={() => handleLocationClick(data.LRNumber)}
+                    />
+                  </td>
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap">
+                    {data.Transporter}
+                  </td>
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap">
+                    {data.tran_cd}
+                  </td>
+                  <td className="p-2 text-right overflow-hidden whitespace-nowrap">
+                    {data.Amount}
+                  </td>
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap">
+                    {data.Sales_tax_No}
+                  </td>
+                  {/* <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.DELIVERED}</td> */}
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap">
+                    {data.EDD}
+                  </td>
+                  <td className="p-2 text-left overflow-hidden whitespace-nowrap">
+                    {data.Actuals}
+                  </td>
+                  <td className="p-2 text-center border-r border-gray-300">
+                    <img
+                      src={pdf}
+                      alt="PDF Icon"
+                      className="h-5 mx-auto cursor-pointer"
+                      onClick={() => downloadPDF(data)}
+                    />
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {currentData.map((data, index) => (
-                  <tr key={index} className="hover:bg-gray-100 border-b border-gray-300">
-                    <td className="p-2 text-center border-l border-gray-300 overflow-hidden whitespace-nowrap flex">
-                      {data.inv_no}
-                      <img
-                        src={feedbackIcon}
-                        alt="Feedback Icon"
-                        className="h-5 mx-auto cursor-pointer pl-1"
-                        onClick={() => handleFeedbackClick(data)}
-                      />
-                    </td>
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap ">{data.invDt}
-                    </td>
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.u_pono}</td>
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.u_podt}</td>
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.Consignee}</td>
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap flex">{data.LRNumber} <img
-                        src={locationIcon}
-                        alt="PDF Icon"
-                        className="h-5 mx-auto cursor-pointer pl-1"
-                      /></td>
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.Transporter}</td>
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.tran_cd}</td>
-                    <td className="p-2 text-right overflow-hidden whitespace-nowrap">{data.Amount}</td>
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.Sales_tax_No}</td>
-                    {/* <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.DELIVERED}</td> */}
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.EDD}</td>
-                    <td className="p-2 text-left overflow-hidden whitespace-nowrap">{data.Actuals}</td>
-                    <td className="p-2 text-center border-r border-gray-300">
-                      <img
-                        src={pdf}
-                        alt="PDF Icon"
-                        className="h-5 mx-auto cursor-pointer"
-                        onClick={() => downloadPDF(data)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-          <div className="flex justify-between items-center text-gray-700 text-sm mt-4">
-            <p>
-              Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredData.length)} to{" "}
-              {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries{" "}
-              {fromDate && toDate && ` for last 3 months`}
-            </p>
-            
-            <div className="flex items-center gap-2">
+        <div className="flex justify-between items-center text-gray-700 text-sm mt-4">
+          <p>
+            Showing{" "}
+            {Math.min(
+              (currentPage - 1) * itemsPerPage + 1,
+              filteredData.length
+            )}{" "}
+            to {Math.min(currentPage * itemsPerPage, filteredData.length)} of{" "}
+            {filteredData.length} entries{" "}
+            {fromDate && toDate && ` for last 3 months`}
+          </p>
+
+          <div className="flex items-center gap-2">
             <button
               className={`px-4 py-2 rounded ${
-                currentPage === 1 ? "bg-white text-gray-500" : "bg-white hover:bg-paginationColor text-gray-700"
+                currentPage === 1
+                  ? "bg-white text-gray-500"
+                  : "bg-white hover:bg-paginationColor text-gray-700"
               }`}
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
@@ -398,7 +509,9 @@ const InvoiceTable = ({ accountId }) => {
 
             <button
               className={`px-4 py-2 rounded ${
-                currentPage === totalPages ? "bg-white text-gray-500" : "bg-white hover:bg-paginationColor text-gray-700"
+                currentPage === totalPages
+                  ? "bg-white text-gray-500"
+                  : "bg-white hover:bg-paginationColor text-gray-700"
               }`}
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
@@ -406,12 +519,12 @@ const InvoiceTable = ({ accountId }) => {
               Next &gt;
             </button>
           </div>
-          </div>  
         </div>
+      </div>
       <Footer />
       {showSuccessPopup && (
-        <SuccessPopup 
-          onClose={() => setShowSuccessPopup(false)} 
+        <SuccessPopup
+          onClose={() => setShowSuccessPopup(false)}
           message="Exported the invoice details successfully"
         />
       )}
@@ -420,7 +533,9 @@ const InvoiceTable = ({ accountId }) => {
           <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
             <div className="flex flex-col items-center">
               <div className="mb-4 text-center">
-                <h3 className="text-lg font-medium text-gray-900">No Data Available</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  No Data Available
+                </h3>
                 <p className="text-sm text-gray-500 mt-2">
                   There is no data available to export at this moment.
                 </p>
@@ -436,13 +551,19 @@ const InvoiceTable = ({ accountId }) => {
         </div>
       )}
       {showFeedback && selectedInvoice && (
-        <FeedbackPopup 
+        <FeedbackPopup
           invoice={selectedInvoice}
           onClose={handleCloseFeedback}
         />
       )}
+      {showConsignmentPopup && (
+        <ConsignmentDetailsPopup
+          setIsOpen={setShowConsignmentPopup}
+          lrNumber={selectedLRNumber}
+        />
+      )}
     </div>
-  ); 
+  );
 };
 
 export default InvoiceTable;

@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import UserIcon from "../assets/user.png";
 import BellIcon from "../assets/notification-bell.png";
 import Logo from "../assets/bechem-logo.png";
-import HomeIcon from "../assets/home.svg"
+import HomeIcon from "../assets/home.svg";
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("");
@@ -43,7 +42,7 @@ const Header = () => {
   return (
     <>
       {/* Header Section */}
-      <header className="bg-customYellow flex justify-between max-h-20 relative ">
+      <header className="bg-customYellow flex justify-between max-h-16 relative ">
         {/* Left Section: Logo and Company Name */}
         <div className="flex items-center space-x-4 ml-2">
           <div className="flex flex-col">
@@ -116,7 +115,9 @@ const Header = () => {
                 <Link
                   to={path}
                   className={`text-sm font-light cursor-pointer transition-all ${
-                    activeTab === path ? "font-bold text-black" : "text-slate-500"
+                    activeTab === path
+                      ? "font-bold text-black"
+                      : "text-slate-500"
                   }`}
                   onClick={() => setActiveTab(path)}
                 >
@@ -130,7 +131,6 @@ const Header = () => {
           </ul>
         </nav>
       </div>
-      
     </>
   );
 };
