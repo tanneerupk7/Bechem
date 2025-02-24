@@ -34,14 +34,15 @@ const InvoiceTable = ({ accountId }) => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [showNoDataPopup, setShowNoDataPopup] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   useEffect(() => {
     if (accountId) {
       const currentDate = new Date();
-      const twoMonthsAgo = new Date();
-      twoMonthsAgo.setMonth(currentDate.getMonth() - 2);
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
   
-      setFromDate(String(formatDate(twoMonthsAgo)));
+      setFromDate(String(formatDate(threeMonthsAgo)));
       setToDate(String(formatDate(currentDate)));
   
       const fetchData = async () => {
@@ -200,15 +201,15 @@ const InvoiceTable = ({ accountId }) => {
     };
   }, []);
 
-  const handleFeedbackClick = (invoice) => {
-    setSelectedInvoice(invoice);
-    setShowFeedbackPopup(true);
+  const handleFeedbackClick = (data) => {
+    setSelectedInvoice(data);
+    setShowFeedback(true);
   };
 
-
-  //FeedbackPopup section content
-
-  
+  const handleCloseFeedback = () => {
+    setShowFeedback(false);
+    setSelectedInvoice(null);
+  };
 
   return (
     <div className="h-screen flex flex-col">
@@ -353,7 +354,7 @@ const InvoiceTable = ({ accountId }) => {
             <p>
               Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredData.length)} to{" "}
               {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries{" "}
-              {fromDate && toDate && ` for last 2 months`}
+              {fromDate && toDate && ` for last 3 months`}
             </p>
             
             <div className="flex items-center gap-2">
@@ -433,6 +434,12 @@ const InvoiceTable = ({ accountId }) => {
             </div>
           </div>
         </div>
+      )}
+      {showFeedback && selectedInvoice && (
+        <FeedbackPopup 
+          invoice={selectedInvoice}
+          onClose={handleCloseFeedback}
+        />
       )}
     </div>
   ); 

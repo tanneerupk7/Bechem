@@ -155,7 +155,7 @@ export const Login = ({ setAccountId, setAccountName }) => {
           {/* Login Form Section */}
           <div className="flex items-center h-full justify-center md:justify-end relative">
             <div className="flex flex-col mx-4 md:mr-20 w-full max-w-[26rem]">
-              <div className="bg-white bg-opacity-45 backdrop-blur-lg rounded-2xl shadow-lg p-8 w-full">
+              <div className="bg-white bg-opacity-45 backdrop-blur-lg pb-20 rounded-2xl shadow-lg p-8 w-full">
                 <h2 className="text-3xl font-bold text-gray-800 mb-1">Login</h2>
                 <p className="text-gray-600 mb-6">Welcome to BECHEM</p>
 

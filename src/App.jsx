@@ -13,6 +13,7 @@ import PoliciesSection from "./components/PoliciesSection"
 import Notifications from "./components/Notifications";
 import Dashboard from "./components/Dashboard";
 import { AuthProvider } from "./contexts/AuthContext";
+import FeedbackPopup from "./components/FeedbackPopup";
 
 const App = () => {
   const [accountId, setAccountId] = useState();
