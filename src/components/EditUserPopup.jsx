@@ -29,7 +29,7 @@ const EditUserPopup = () => {
     <div className="flex justify-center items-center min-h-screen bg-black bg-opacity-80 px-4">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] relative">
         {/* Header */}
-        <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg">
+        {/* <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg">
           <div>
             <h2 className="text-xl font-bold text-slate-900">Edit User</h2>
             <p className="text-gray-500" style={{ fontSize: '0.600rem' }}>
@@ -39,7 +39,23 @@ const EditUserPopup = () => {
           <button className="text-white hover:text-gray-300">
             <XMarkIcon className="w-5 h-5 mb-" />
           </button>
-        </div>
+        </div> */}
+            <div 
+                  className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full" 
+                  style={{ backgroundImage: 'url(header.svg)', backgroundSize: "contain", backgroundPosition: "left center", backgroundRepeat: 'no-repeat' }}
+                >
+                  <div className="flex-1">
+                    <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
+                    Distributor Feedback
+                    </h2>
+                    <p className="text-gray-500 text-[10px] leading-none m-0 px-1 font-helvetica">
+                    Rate the delivery experience, click save when you're done.
+                    </p>
+                  </div>
+                  <button>
+              <XMarkIcon className="w-6 h-6 text-gray-500" />
+            </button>
+                </div>
 
         {/* Content */}
         <div className="p-6 pl-24 pr-12">

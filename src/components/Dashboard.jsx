@@ -67,6 +67,7 @@ const Dashboard = ({
 
   return (
     <>
+<<<<<<< HEAD
       {isAdmin ? (
         selectedDistributor.ac_name !== "" ? (
           <Header
@@ -93,6 +94,30 @@ const Dashboard = ({
           selectedDistributor={selectedDistributor}
         />
       )}
+=======
+      {isAdmin ? <HeaderForDashboard isAdmin={isAdmin} accountName={accountName}/> : <Header isAdmin={isAdmin} accountName={accountName} />}
+      <div className="p-4 grid grid-cols-3 gap-4">
+        {/* Top 5 Products */}
+        <div className="bg-white shadow-lg p-4 rounded-lg">
+          <h3 className="font-semibold">Top 5 Products</h3>
+          <PieChart width={250} height={200}>
+            <Pie
+              data={productData}
+              dataKey="value"
+              cx="50%"
+              cy="50%"
+              outerRadius={50}
+            >
+              {productData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index]} />
+              ))}
+            </Pie>
+          </PieChart>
+          <button className="bg-green-700 text-white px-3 py-1 rounded-md">
+            View Report
+          </button>
+        </div>
+>>>>>>> 5c060787c25ded16dcfed47cd15af6333b1614c8
 
       {/* {isAdmin  ? (
         <HeaderForDashboard

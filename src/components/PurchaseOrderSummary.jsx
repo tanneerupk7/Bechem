@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import profileImg from "../assets/images/profile.png"; // Ensure you have the correct image path
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import SuccessPopup from "./successPopup"; // Import the SuccessPopup component
+import SuccessPopup from "./successPopup"; 
 
 const PurchaseOrderSummary = ({ poData, onClose }) => {
   const [isOpen, setIsOpen] = useState(true);

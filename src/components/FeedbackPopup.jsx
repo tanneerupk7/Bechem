@@ -299,7 +299,7 @@ const FeedbackPopup = ({ onClose, invoice }) => {
     <>
       <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg w-full max-w-5xl relative shadow-lg">
-          <div
+          {/* <div
             className="rounded-t-lg px-3 py-2 flex justify-between items-center w-full"
             style={{
               backgroundImage: `url(${headerImage})`,
@@ -318,7 +318,23 @@ const FeedbackPopup = ({ onClose, invoice }) => {
             <button onClick={onClose}>
               <XMarkIcon className="w-6 h-6" />
             </button>
-          </div>
+          </div> */}
+             <div 
+                  className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full" 
+                  style={{ backgroundImage: 'url(header.svg)', backgroundSize: "contain", backgroundPosition: "left center", backgroundRepeat: 'no-repeat' }}
+                >
+                  <div className="flex-1">
+                    <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
+                    Distributor Feedback
+                    </h2>
+                    <p className="text-gray-500 text-[10px] leading-none m-0 px-1 font-helvetica">
+                    Rate the delivery experience, click save when you're done.
+                    </p>
+                  </div>
+                  <button onClick={onClose}>
+              <XMarkIcon className="w-6 h-6 text-gray-500" />
+            </button>
+                </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center p-4">
             <div className="flex">

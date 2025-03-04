@@ -226,10 +226,10 @@ const UsersDetails = ({ accountName,isAdmin }) => {
           </div>
         )}
         <Header className="fixed top-0 left-0"/>
-          <div className="bg-white rounded-lg p-4 md:p-6 flex-1">
+          <div className="bg-white rounded-lg pb-4 md:px-6  flex-1">
             <div className="relative w-full md:w-1/4 ml-auto ">
-              <div className="flex">
-                <div className="relative inline-block">
+              <div className="flex  ">
+                <div className="relative inline-block ">
                   <button
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
@@ -365,7 +365,7 @@ const UsersDetails = ({ accountName,isAdmin }) => {
           <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] relative">
             {/* Header */}
             {/* <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg"> */}
-            <div className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
+            {/* <div className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
                   style={{
                     backgroundImage: `url(${headerImage})`,
                     backgroundSize: "cover",
@@ -383,7 +383,26 @@ const UsersDetails = ({ accountName,isAdmin }) => {
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
-            </div>
+            </div> */}
+                    <div 
+                              className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full" 
+                              style={{ backgroundImage: 'url(header.svg)', backgroundSize: "contain", backgroundPosition: "left center", backgroundRepeat: 'no-repeat' }}
+                            >
+                              <div className="flex-1">
+                                <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
+                                Distributor Feedback
+                                </h2>
+                                <p className="text-gray-500 text-[10px] leading-none m-0 px-1 font-helvetica">
+                                Rate the delivery experience, click save when you're done.
+                                </p>
+                              </div>
+                              <button 
+              className="text-gray-500"
+              onClick={() => setShowEditUsersPopup(!showEditUsersPopup)}
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+                            </div>
 
             {/* Content */}
             <div className="p-6 pl-24 pr-12">

@@ -1,5 +1,5 @@
 import React from "react";
-import Success from "../assets/Successful.png";
+import Success from "../assets/Success.svg";
 
 const SuccessPopup = ({ onClose, message }) => {
   return (
@@ -17,7 +17,7 @@ const SuccessPopup = ({ onClose, message }) => {
           <img
             src={Success}
             alt="Success Icon"
-            className="w-8 h-8 mr-3"
+            className="w-[55px] h-[55px] mr-3"
           />
           {/* Text aligned vertically */}
           <div className="text-left">

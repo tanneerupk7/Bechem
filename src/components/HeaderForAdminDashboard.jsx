@@ -92,9 +92,9 @@ const HeaderForDashboard = () => {
       <header className="bg-customYellow flex justify-between max-h-16 relative">
         {/* Left Section: Logo and Company Name */}
         <div className="flex items-center space-x-4 ml-2">
-          <div className="flex flex-col">
-            <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
-            <span className="text-xs md:text-sm">Lubrication Technology</span>
+          <div className="flex flex-col ">
+            <span className="text-base md:text-lg font-bold ">BECHEM INDIA</span>
+            <span className="text-xs md:text-sm ">Lubrication Technology</span>
           </div>
         </div>
 

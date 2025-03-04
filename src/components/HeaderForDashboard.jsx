@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import UserIcon from "../assets/user.png";
 import BellIcon from "../assets/notification-bell.png";
-import Logo from "../assets/bechem-logo.png";
+import Logo from "../assets/bechemlogo.png";
 import HomeIcon from "../assets/home.svg";
 import headerImage from "../assets/bechemheader.jpeg";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -140,10 +140,10 @@ const HeaderForDashboard = ({
   return (
     <>
       {/* Header Section */}
-      <header className="bg-customYellow flex justify-between max-h-[62px] relative">
+      <header className="bg-customYellow flex justify-between max-h-[62px] relative shadow-[0_4px_6px_-2px_rgba(0,0,0,0.4)]">
         {/* Left Section: Logo and Company Name */}
         <div className="flex items-center space-x-4 ml-2">
-          <div className="flex flex-col">
+          <div className="flex flex-col text-[#15460B]">
             <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
             <span className="text-xs md:text-sm -mt-1">
               Lubrication Technology
@@ -273,7 +273,7 @@ const HeaderForDashboard = ({
             <img
               src={Logo}
               alt="Company Logo"
-              className="h-12 md:h-20 cursor-pointer"
+              className="h-[62px] cursor-pointer "
             />
           </Link>
         </div>
@@ -282,13 +282,13 @@ const HeaderForDashboard = ({
       {/* Navigation Menu with Distributor Dropdown */}
       {isAdmin && !showNavMenu && (
         <div className="c-lg:px-[20%]">
-          <nav className="w-full bg-gradient-to-r from-neutral-200 to-[#d9d9d9] shadow-m border px-4 py-4 rounded-br-full rounded-bl-full">
+          <nav className="w-[820px] h-[52px] bg-gradient-to-r from-neutral-200 to-[#d9d9d9] shadow-m border px-4 py-4 rounded-br-full rounded-bl-full ">
             <ul className="flex flex-wrap justify-center gap-4 md:gap-8">
-              <li className="relative">
+              {/* <li className="relative -mt-2 ">
                 <select
                   value={selectedDistributor.ac_name}
                   onChange={handleDistributorChange}
-                  className="text-sm font-light cursor-pointer transition-all text-slate-700 bg-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 max-w-[400px] w-full"
+                  className="text-sm font-light cursor-pointer transition-all text-slate-700 bg-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 max-w-[400px] w-full "
                 >
                   <option value="">Select Distributor</option>
                   {distributors.map((distributor, index) => (
@@ -297,7 +297,37 @@ const HeaderForDashboard = ({
                     </option>
                   ))}
                 </select>
-              </li>
+              </li> */}
+              <li className="relative -mt-2">
+  <div className="relative w-full max-w-[400px]">
+    <select
+      value={selectedDistributor}
+      onChange={handleDistributorChange}
+      className="text-sm font-light cursor-pointer transition-all text-slate-700 bg-white rounded-md px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full appearance-none"
+    >
+      <option value="">Select Distributor</option>
+      {distributors.map((distributor, index) => (
+        <option key={index} value={distributor}>
+          {distributor}
+        </option>
+      ))}
+    </select>
+    {/* Custom Arrow */}
+    <svg
+      className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-700 pointer-events-none"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+        clipRule="evenodd"
+      />
+    </svg>
+  </div>
+</li>
+
             </ul>
           </nav>
         </div>

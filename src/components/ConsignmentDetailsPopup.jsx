@@ -75,7 +75,7 @@ const ConsignmentDetailsPopup = ({ setIsOpen, lrNumber }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4">
       <div className="bg-white rounded-md w-[950px] h-[640px] shadow-lg relative">
-        <div
+        {/* <div
           className="rounded-t-lg px-3 py-1 flex justify-between items-center"
           style={{
             backgroundImage: `url(${HeaderImage})`,
@@ -94,7 +94,23 @@ const ConsignmentDetailsPopup = ({ setIsOpen, lrNumber }) => {
           <button onClick={() => setIsOpen(false)}>
             <XMarkIcon className="w-5 h-5" />
           </button>
-        </div>
+        </div> */}
+          <div 
+                  className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full" 
+                  style={{ backgroundImage: 'url(header.svg)', backgroundSize: "contain", backgroundPosition: "left center", backgroundRepeat: 'no-repeat' }}
+                >
+                  <div className="flex-1">
+                    <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
+                    Consignment Details
+                    </h2>
+                    <p className="text-gray-500 text-[10px] leading-none m-0 px-1 font-helvetica">
+                    Track the latest update of your consignment
+                    </p>
+                  </div>
+                  <button onClick={() => setIsOpen(false)}>
+            <XMarkIcon className="w-6 h-6 text-gray-500" />
+          </button>
+                </div>
 
         <div className="grid grid-cols-2 gap-6 p-4">
           <div className="border border-gray-200 bg-gray-50 rounded-lg p-8 shadow-md h-[550px] w-[420px]">
