@@ -55,7 +55,7 @@ const Card = ({ icon, title, description, buttonText, format, bgImage, onDownloa
   );
 };
 
-const Cards = ({isAdmin,accountName}) => {
+const Cards = ({isAdmin,accountName, selectedDistributor}) => {
   const [policies, setPolicies] = useState([]);
   const API_URI = import.meta.env.VITE_API_URI;
 
@@ -111,7 +111,7 @@ const Cards = ({isAdmin,accountName}) => {
 
   return (
     <div>
-      <Header isAdmin={isAdmin} accountName={accountName}/>
+      <Header isAdmin={isAdmin} accountName={accountName} selectedDistributor={selectedDistributor}/>
       <div className="bg-white flex flex-col items-center mt-32">
         {/* Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-4 bg-white gap-6">

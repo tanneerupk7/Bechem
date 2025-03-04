@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import ground from "../assets/bechem-background.jpeg";
@@ -13,7 +13,12 @@ import headerImage from "../assets/bechemheader.jpeg";
 import ForgotPassword from "./forgetPassword";
 import { BlinkBlur } from "react-loading-indicators";
 
-export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
+export const Login = ({
+  setAccountId,
+  setAccountName,
+  setIsAdmin,
+  setDistributorData,
+}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [forgotPasswordUsername, setFogotPasswordUsername] = useState("");
@@ -51,12 +56,20 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
 
       const data = await response.json();
 
+      console.log(data.data);
+
       if (response.ok && data.status === "success") {
         const isAdmin = Array.isArray(data.data) && data.data.length > 1;
         setIsAdmin(isAdmin);
 
         if (isAdmin) {
-          // For admin, don't set specific account details
+          const trimedData = data.data.map((item) => ({
+            ...item,
+            ac_name: item.ac_name.trim(),
+          }));
+          // For admin, set distributor data
+          setDistributorData(trimedData); // Assuming distributors are returned in the response
+
           setAccountId(null);
           setAccountName(null);
         } else {
@@ -133,6 +146,23 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
     setShowSuccessPopup(false);
     setShowForgotPasswordPopup(false);
   };
+
+  const fetchUserEmail = async (username) => {
+    try {
+      const response = await axios.post("/get_mailid/", { UserName: username });
+      setFogotPasswordMailId(response.data.UserMail); // Set the fetched email in the state
+    } catch (error) {
+      console.error("Error fetching email:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (forgotPasswordUsername) {
+      fetchUserEmail(forgotPasswordUsername); // Call the function if username is not empty
+    } else {
+      setFogotPasswordMailId(""); // Clear email if username is empty
+    }
+  }, [forgotPasswordUsername]); // Depend on forgotPasswordUsername
 
   // ... rest of the code ...
 
@@ -272,7 +302,6 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
               </div>
             </div>
           </footer>
-         
         </div>
       </div>
 
@@ -281,64 +310,28 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
           {
             <div className="flex justify-center items-center min-h-screen w-full absolute top-0 left-0 bg-black bg-opacity-80">
               <div className="relative bg-white rounded-lg shadow-lg w-[62%] h-auto md:h-[520px] flex flex-col ">
-                {/* Header Bar */}
-                {/* <div
-                  className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
+                <div
+                  className="px-3 py-1 flex justify-between items-center bg-headerColor border-b-2 border-customYellow h-[55px] w-full"
                   style={{
-                    backgroundImage: `url(${headerImage})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
+                    backgroundImage: "url(header.svg)",
+                    backgroundSize: "contain",
+                    backgroundPosition: "left center",
+                    backgroundRepeat: "no-repeat",
                   }}
                 >
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">
+                  <div className="flex-1">
+                    <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
                       Notify Admin
                     </h2>
-                    <p
-                      className="text-gray-500"
-                      style={{ fontSize: "0.600rem" }}
-                    >
+                    <p className="text-gray-500 text-[9px] leading-none m-0 px-1 font-helvetica">
                       Enter the below fields here, click save when you're done
                       will notify admin.
                     </p>
-                  </div> */}
-                  {/* Close Button (Cross Mark) */}
-                  {/* <button
-                    onClick={closeAllPopups}
-                    className="text-gray-700 hover:text-gray-900 focus:outline-none"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                  </div>
+                  <button onClick={closeAllPopups}>
+                    <XMarkIcon className="w-6 h-6 text-gray-500" />
                   </button>
-                </div> */}
-                       <div 
-                              className="px-3 py-1 flex justify-between items-center bg-headerColor border-b-2 border-customYellow h-[55px] w-full" 
-                              style={{ backgroundImage: 'url(header.svg)', backgroundSize: "contain", backgroundPosition: "left center", backgroundRepeat: 'no-repeat' }}
-                            >
-                              <div className="flex-1">
-                                <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
-                                Notify Admin
-                                </h2>
-                                <p className="text-gray-500 text-[9px] leading-none m-0 px-1 font-helvetica">
-                                Enter the below fields here, click save when you're done will notify admin.
-                                </p>
-                              </div>
-                              <button onClick={closeAllPopups}>
-                          <XMarkIcon className="w-6 h-6 text-gray-500" />
-                        </button>
-                            </div>
+                </div>
 
                 {/* Main Content */}
                 <div className="flex flex-col md:flex-row flex-grow">
@@ -371,7 +364,6 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
                           // className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500"
                           // placeholder="Akhil25"
                           className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500 placeholder:text-gray-400"
-
                           placeholder="Akhil25"
                         />
                       </div>

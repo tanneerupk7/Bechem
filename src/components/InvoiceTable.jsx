@@ -17,7 +17,12 @@ import { BlinkBlur } from "react-loading-indicators";
 import SuccessPopup from "./SuccessPopup";
 import ConsignmentDetailsPopup from "./ConsignmentDetailsPopup";
 
-const InvoiceTable = ({ accountId, accountName, isAdmin }) => {
+const InvoiceTable = ({
+  accountId,
+  accountName,
+  isAdmin,
+  selectedDistributor,
+}) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,7 +45,7 @@ const InvoiceTable = ({ accountId, accountName, isAdmin }) => {
   const [selectedLRNumber, setSelectedLRNumber] = useState(null);
 
   useEffect(() => {
-    if (accountId) {
+    if (accountId || selectedDistributor.ac_id) {
       const currentDate = new Date();
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
@@ -57,7 +62,7 @@ const InvoiceTable = ({ accountId, accountName, isAdmin }) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              ACID: accountId,
+              ACID: accountId || selectedDistributor.ac_id,
               search: "%",
               from_date: "",
               to_date: "",
@@ -76,7 +81,7 @@ const InvoiceTable = ({ accountId, accountName, isAdmin }) => {
 
       fetchData();
     }
-  }, [accountId]);
+  }, [accountId, selectedDistributor]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.trim());
@@ -236,6 +241,7 @@ const InvoiceTable = ({ accountId, accountName, isAdmin }) => {
         className="fixed top-0 left-0"
         isAdmin={isAdmin}
         accountName={accountName}
+        selectedDistributor={selectedDistributor}
       />
       <div className="bg-white rounded-lg flex-1 p-4 md:p-6">
         <div className="relative w-full md:w-1/4 ml-auto ">

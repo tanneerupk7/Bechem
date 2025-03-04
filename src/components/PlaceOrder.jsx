@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 
-const PlaceOrder = ({accountId,isAdmin,accountName}) => {
+const PlaceOrder = ({accountId,isAdmin,accountName, selectedDistributor}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [orderType, setOrderType] = useState('');
   const [poNo, setPoNo] = useState('');
@@ -44,7 +44,7 @@ const PlaceOrder = ({accountId,isAdmin,accountName}) => {
 
   return (
     <>
-      <Header isAdmin={isAdmin} accountName={accountName} />
+      <Header isAdmin={isAdmin} accountName={accountName} selectedDistributor={selectedDistributor}/>
       <div className="p-6 font-sans">
         <div className='px-10'>
         <div className="flex justify-between items-center mb-6">

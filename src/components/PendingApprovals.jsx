@@ -12,7 +12,7 @@ import Footer from "./Footer";
 import { BlinkBlur } from "react-loading-indicators";
 import SuccessPopup from "./SuccessPopup";
 
-const SOGTable = ({ accountId,isAdmin,accountName }) => {
+const SOGTable = ({ accountId,isAdmin,accountName, selectedDistributor }) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -141,7 +141,7 @@ const SOGTable = ({ accountId,isAdmin,accountName }) => {
 
   return (
     <div className="h-screen flex flex-col">
-      <Header isAdmin={isAdmin} accountName={accountName} />
+      <Header isAdmin={isAdmin} accountName={accountName} selectedDistributor={selectedDistributor}/>
       <div className="bg-white rounded-lg flex-1 p-4 md:p-6 ">
         <div className="relative w-full md:w-1/4 ml-auto">
           <div className="flex">

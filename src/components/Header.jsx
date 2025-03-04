@@ -5,7 +5,7 @@ import BellIcon from "../assets/notification-bell.png";
 import Logo from "../assets/bechem-logo.png";
 import HomeIcon from "../assets/home.svg";
 
-const Header = ({ accountName, isAdmin, name }) => {
+const Header = ({ accountName, isAdmin, name, selectedDistributor }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("");
   const location = useLocation();
@@ -47,6 +47,37 @@ const Header = ({ accountName, isAdmin, name }) => {
         <div className="flex items-center space-x-4 ml-2">
           <div className="flex flex-col">
             {isAdmin ? (
+              selectedDistributor.ac_name !== "" ? (
+                <div className="flex flex-col">
+                  <span className="text-base md:text-lg font-bold text-headerFontColor">
+                    {selectedDistributor.ac_name}
+                  </span>
+                  <span className="text-xs md:text-sm text-headerFontColor">
+                    Welcome to Carl Bechem Sales Order Gateway portal
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <span className="text-base md:text-lg font-bold">
+                    BECHEM INDIA
+                  </span>
+                  <span className="text-xs md:text-sm ">
+                    Lubrication Technology
+                  </span>
+                </>
+              )
+            ) : (
+              <div className="flex flex-col">
+                <span className="text-base md:text-lg font-bold text-headerFontColor">
+                  {accountName}
+                </span>
+                <span className="text-xs md:text-sm text-headerFontColor">
+                  Welcome to Carl Bechem Sales Order Gateway portal
+                </span>
+              </div>
+            )}
+
+            {/* {isAdmin ? (
               <>
                 <span className="text-base md:text-lg font-bold">
                   BECHEM INDIA
@@ -64,7 +95,7 @@ const Header = ({ accountName, isAdmin, name }) => {
                   Welcome to Carl Bechem Sales Order Gateway portal
                 </span>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 

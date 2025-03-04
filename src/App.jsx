@@ -18,6 +18,10 @@ const App = () => {
   const [accountId, setAccountId] = useState();
   const [accountName, setAccountName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [distributorData, setDistributorData] = useState([]);
+  const [selectedDistributor, setSelectedDistributor] = useState({
+    ac_name: "",
+  });
 
   return (
     <AuthProvider>
@@ -30,6 +34,7 @@ const App = () => {
                 setAccountId={setAccountId}
                 setAccountName={setAccountName}
                 setIsAdmin={setIsAdmin}
+                setDistributorData={setDistributorData}
               />
             }
           />
@@ -51,6 +56,7 @@ const App = () => {
                 accountId={accountId}
                 accountName={accountName}
                 isAdmin={isAdmin}
+                selectedDistributor={selectedDistributor}
               />
             }
           />
@@ -61,6 +67,7 @@ const App = () => {
                 accountId={accountId}
                 accountName={accountName}
                 isAdmin={isAdmin}
+                selectedDistributor={selectedDistributor}
               />
             }
           />
@@ -71,6 +78,7 @@ const App = () => {
                 accountId={accountId}
                 accountName={accountName}
                 isAdmin={isAdmin}
+                selectedDistributor={selectedDistributor}
               />
             }
           />
@@ -80,6 +88,7 @@ const App = () => {
               <PendingApprovals
                 accountId={accountId}
                 accountName={accountName}
+                selectedDistributor={selectedDistributor}
               />
             }
           />
@@ -90,13 +99,18 @@ const App = () => {
                 accountId={accountId}
                 accountName={accountName}
                 isAdmin={isAdmin}
+                selectedDistributor={selectedDistributor}
               />
             }
           />
           <Route
             path="/UsersDetails"
             element={
-              <UsersDetails accountId={accountId} accountName={accountName} />
+              <UsersDetails
+                accountId={accountId}
+                accountName={accountName}
+                isAdmin={isAdmin}
+              />
             }
           />
           <Route
@@ -112,6 +126,7 @@ const App = () => {
                 accountId={accountId}
                 accountName={accountName}
                 isAdmin={isAdmin}
+                selectedDistributor={selectedDistributor}
               />
             }
           />
@@ -122,6 +137,9 @@ const App = () => {
                 accountId={accountId}
                 accountName={accountName}
                 isAdmin={isAdmin}
+                distributorData={distributorData}
+                selectedDistributor={selectedDistributor}
+                setSelectedDistributor={setSelectedDistributor}
               />
             }
           />

@@ -21,7 +21,7 @@ import Footer from "./Footer";
 import { BlinkBlur } from "react-loading-indicators";
 import SuccessPopup from "./SuccessPopup";
 
-const UsersDetails = ({ accountName }) => {
+const UsersDetails = ({ accountName,isAdmin }) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,7 +51,7 @@ const UsersDetails = ({ accountName }) => {
   const [showNoDataPopup, setShowNoDataPopup] = useState(false);
 
   useEffect(() => {
-    if (accountName) {
+    if (isAdmin) {
         const currentDate = new Date();
         const threeMonthsAgo = new Date();
         threeMonthsAgo.setMonth(currentDate.getMonth() - 3);

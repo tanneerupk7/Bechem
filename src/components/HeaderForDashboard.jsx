@@ -8,7 +8,17 @@ import headerImage from "../assets/bechemheader.jpeg";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import AddUserPopup from "./AddUserPopup";
 
-const HeaderForDashboard = ({ setAccountId, setAccountName, isAdmin }) => {
+const HeaderForDashboard = ({
+  accountId,
+  accountName,
+  isAdmin,
+  setAccountId,
+  setAccountName,
+  distributorData,
+  onDistributorSelect,
+  selectedDistributor,
+  setSelectedDistributor,
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("");
   const [showAddNewUserPopup, setShowAddNewUserPopup] = useState(false);
@@ -21,9 +31,9 @@ const HeaderForDashboard = ({ setAccountId, setAccountName, isAdmin }) => {
   const [mailId, setMailId] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [selectedDistributor, setSelectedDistributor] = useState("");
   const [distributors, setDistributors] = useState([]);
   const [showNavMenu, setShowNavMenu] = useState(false);
+
   const API_URI = import.meta.env.VITE_API_URI;
   const navigate = useNavigate();
 
@@ -50,7 +60,7 @@ const HeaderForDashboard = ({ setAccountId, setAccountName, isAdmin }) => {
       try {
         const response = await fetch(`${API_URI}/distributors/`);
         const data = await response.json();
-
+        console.log(`Distributor data: ${data}`);
         if (data && data.distributors) {
           // Clean the distributor names by trimming whitespace
           const cleanedDistributors = data.distributors.map((dist) =>
@@ -85,29 +95,47 @@ const HeaderForDashboard = ({ setAccountId, setAccountName, isAdmin }) => {
     };
   }, []);
 
-  const handleDistributorChange = async (e) => {
+  const handleDistributorChange = (e) => {
     const selected = e.target.value;
-    setSelectedDistributor(selected);
-    // Debug log
 
-    if (selected) {
-      try {
-        const response = await fetch(
-          `${API_URI}/distributor-details/${selected}`
-        );
-        const data = await response.json();
+    const filteredDistributor = distributorData.filter(
+      (item) => item.ac_name === selected
+    );
 
-        if (data && data.ac_id) {
-          setAccountId(data.ac_id);
-          setAccountName(selected);
-          setShowNavMenu(true);
-          navigate("/Dashboard");
-        }
-      } catch (error) {
-        console.error("Error fetching distributor details:", error);
-      }
-    }
+    setSelectedDistributor(filteredDistributor[0]);
+
+    console.log(filteredDistributor);
+
+    setAccountId(filteredDistributor.ac_id);
+    setAccountName(filteredDistributor.ac_name);
+
+    // if (selected) {
+    //   // Check if distributorData is defined before using it
+    //   if (!distributorData) {
+    //     console.error("Distributor data is not available.");
+    //     return;
+    //   }
+
+    //   // Find the selected distributor from distributorData
+    //   const selectedDistributorData = distributorData.find(
+    //     (dist) => dist.name === selected
+    //   );
+
+    //   if (selectedDistributorData) {
+    //     // Set the accountId and accountName using the distributor data
+    //     setAccountId(selectedDistributorData.value); // Assuming value is the accountId
+    //     setAccountName(selectedDistributorData.name);
+    //     onDistributorSelect(
+    //       selectedDistributorData.value,
+    //       selectedDistributorData.name
+    //     ); // Call the handler
+    //     setIsDropdownOpen(false); // Hide the dropdown
+    //     navigate("/Dashboard"); // Navigate to the dashboard
+    //   }
+    // }
   };
+
+  console.log("Distributor Data:", distributorData);
 
   return (
     <>
@@ -117,7 +145,9 @@ const HeaderForDashboard = ({ setAccountId, setAccountName, isAdmin }) => {
         <div className="flex items-center space-x-4 ml-2">
           <div className="flex flex-col">
             <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
-            <span className="text-xs md:text-sm -mt-1">Lubrication Technology</span>
+            <span className="text-xs md:text-sm -mt-1">
+              Lubrication Technology
+            </span>
           </div>
         </div>
 
@@ -256,7 +286,7 @@ const HeaderForDashboard = ({ setAccountId, setAccountName, isAdmin }) => {
             <ul className="flex flex-wrap justify-center gap-4 md:gap-8">
               <li className="relative">
                 <select
-                  value={selectedDistributor}
+                  value={selectedDistributor.ac_name}
                   onChange={handleDistributorChange}
                   className="text-sm font-light cursor-pointer transition-all text-slate-700 bg-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 max-w-[400px] w-full"
                 >

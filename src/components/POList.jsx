@@ -13,7 +13,12 @@ import { BlinkBlur } from "react-loading-indicators";
 import SuccessPopup from "./SuccessPopup";
 import PurchaseOrderSummary from "./PurchaseOrderSummary";
 
-const PurchaseOrderList = ({ accountId,isAdmin,accountName }) => {
+const PurchaseOrderList = ({
+  accountId,
+  isAdmin,
+  accountName,
+  selectedDistributor,
+}) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,7 +37,7 @@ const PurchaseOrderList = ({ accountId,isAdmin,accountName }) => {
   const [selectedPO, setSelectedPO] = useState(null);
 
   useEffect(() => {
-    if (accountId) {
+    if (accountId || selectedDistributor.ac_id) {
       const currentDate = new Date();
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
@@ -49,14 +54,16 @@ const PurchaseOrderList = ({ accountId,isAdmin,accountName }) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              ACID: accountId,
+              ACID: accountId || selectedDistributor.ac_id,
               search: "%",
-              from_date: fromDate,
-              to_date: toDate,
+              from_date: "",
+              to_date: "",
             }),
           });
 
           const result = await response.json();
+          console.log(result);
+          
           setData(result);
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -194,6 +201,7 @@ const PurchaseOrderList = ({ accountId,isAdmin,accountName }) => {
         className="fixed top-0 left-0"
         isAdmin={isAdmin}
         accountName={accountName}
+        selectedDistributor={selectedDistributor}
       />
       <div className="bg-white rounded-lg flex-1 p-4 md:p-6">
         <div className="relative w-full md:w-1/4 ml-auto">
@@ -347,7 +355,7 @@ const PurchaseOrderList = ({ accountId,isAdmin,accountName }) => {
             </thead>
 
             <tbody>
-              {currentData.map((data, index) => (
+              {data.map((data, index) => (
                 <tr
                   key={index}
                   className="hover:bg-gray-100 border-b border-gray-300"
