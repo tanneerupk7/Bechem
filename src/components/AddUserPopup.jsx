@@ -49,7 +49,7 @@ const AddUserPopup = ({ onClose }) => {
       <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
         {/* Header */}
         {/* <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg"> */}
-        <div className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
+        {/* <div className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
                   style={{
                     backgroundImage: `url(${headerImage})`,
                     backgroundSize: "cover",
@@ -63,6 +63,22 @@ const AddUserPopup = ({ onClose }) => {
           </div>
           <button className="text-white hover:text-gray-300" onClick={onClose}>
             <XMarkIcon className="w-5 h-5" />
+          </button>
+        </div> */}
+         <div 
+          className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full" 
+          style={{ backgroundImage: 'url(header.svg)', backgroundSize: "contain", backgroundPosition: "left center", backgroundRepeat: 'no-repeat' }}
+        >
+          <div className="flex-1">
+            <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
+            Add New User
+            </h2>
+            <p className="text-gray-500 text-[10px] leading-none m-0 px-1 font-helvetica">
+            Add new user here. Click save when you're done.
+            </p>
+          </div>
+          <button className="text-gray-500" onClick={onClose}>
+            <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
 

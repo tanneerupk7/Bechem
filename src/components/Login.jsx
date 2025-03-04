@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import ground from "../assets/bechem-background.jpeg";
+import ground from "../assets/forget.svg";
 import logo from "../assets/bechem-logoy.jpeg";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import SuccessPopup from "./SuccessPopup";

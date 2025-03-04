@@ -58,7 +58,7 @@ const Dashboard = ({isAdmin, accountName}) => {
 
   return (
     <>
-      {isAdmin ? <HeaderForDashboard /> : <Header />}
+      {isAdmin ? <HeaderForDashboard isAdmin={isAdmin} accountName={accountName}/> : <Header isAdmin={isAdmin} accountName={accountName} />}
       <div className="p-4 grid grid-cols-3 gap-4">
         {/* Top 5 Products */}
         <div className="bg-white shadow-lg p-4 rounded-lg">

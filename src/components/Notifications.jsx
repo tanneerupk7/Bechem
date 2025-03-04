@@ -117,7 +117,7 @@ export default function NotificationsPanel({ accountName }) {
           <p className="mt-4 text-white">Loading notifications...</p>
         </div>
       )}
-      <Header accountName={accountName} />
+      <Header accountName={accountName} notifications={data} />
       <main className="flex-1 py-6">
         <div className="max-w-7xl mx-auto px-4">
           {/* Filter Section - Made Responsive */}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import UserIcon from "../assets/user.png";
 import BellIcon from "../assets/notification-bell.png";
-import Logo from "../assets/bechem-logo.png";
+import Logo from "../assets/bechemlogo.png";
 import HomeIcon from "../assets/home.svg";
 import headerImage from "../assets/bechemheader.jpeg";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -63,12 +63,12 @@ const Header = () => {
   return (
     <>
       {/* Header Section */}
-      <header className="bg-customYellow flex justify-between max-h-16 relative">
+      <header className="bg-customYellow flex justify-between max-h-[62px] relative shadow-[0_4px_6px_-2px_rgba(0,0,0,0.4)]">
         {/* Left Section: Logo and Company Name */}
         <div className="flex items-center space-x-4 ml-2">
-          <div className="flex flex-col">
+          <div className="flex flex-col text-[#15460B]">
             <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
-            <span className="text-xs md:text-sm">Lubrication Technology</span>
+            <span className="text-xs md:text-sm -mt-1">Lubrication Technology</span>
           </div>
         </div>
 
@@ -187,17 +187,17 @@ const Header = () => {
             </svg>
           </Link>
           {/* Company Logo */}
-          <img src={Logo} alt="Company Logo" className="h-12 md:h-20" />
+          <img src={Logo} alt="Company Logo" className="h-[62px]" />
         </div>
       </header>
 
       {/* Navigation Menu */}
       <div className="c-lg:px-[20%]">
-        <nav className="w-full bg-gradient-to-r from-neutral-200 to-[#d9d9d9] shadow-m border px-4 py-4 rounded-br-full rounded-bl-full">
+        <nav className="w-[724px] ml-16 h-[52px] bg-gradient-to-r from-neutral-200 to-[#d9d9d9] shadow-m border px-4 py-4 rounded-br-full rounded-bl-full ">
           <ul className="flex flex-wrap justify-center gap-4 md:gap-8">
-            <li className="relative">
+            <li className="relative -mt-1">
               <button
-                className="text-sm font-light cursor-pointer transition-all text-slate-500"
+                className="text-[14px] font-bold font-helvetica cursor-pointer transition-all text-slate-500 "
                 onClick={() => setShowAddNewUserPopup(true)}
               >
                 Add New User

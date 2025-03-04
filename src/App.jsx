@@ -96,7 +96,7 @@ const App = () => {
           <Route
             path="/UsersDetails"
             element={
-              <UsersDetails accountId={accountId} accountName={accountName} />
+              <UsersDetails accountId={accountId} accountName={accountName} isAdmin={isAdmin}/>
             }
           />
           <Route

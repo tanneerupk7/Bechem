@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import UserIcon from "../assets/user.png";
 import BellIcon from "../assets/notification-bell.png";
-import Logo from "../assets/bechem-logo.png";
+import Logo from "../assets/bechemlogo.png";
 import HomeIcon from "../assets/home.svg";
 import headerImage from "../assets/bechemheader.jpeg";
 
-const Header = ({ accountName }) => {
+const Header = ({ accountName,notifications = [] }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("");
   const [showAddNewUserPopup, setShowAddNewUserPopup] = useState(false);
+  const unreadCount = notifications.filter((n) => !n.flag).length;
   // const menuItems = [
   //   { id: 1, name: "Add New User", path: "/Add_New_User" },
   // ];
@@ -61,19 +62,19 @@ const Header = ({ accountName }) => {
   return (
     <>
       {/* Header Section */}
-      <header className="bg-customYellow flex justify-between max-h-16 relative ">
+      <header className="bg-customYellow flex justify-between max-h-[62px] relative shadow-[0_4px_6px_-2px_rgba(0,0,0,0.4)]">
         {/* Left Section: Logo and Company Name */}
-        <div className="flex items-center space-x-4 ml-2">
-          <div className="flex flex-col">
+        <div className="flex items-center space-x-4 ml-2 ">
+          <div className="flex flex-col text-[#15460B]">
             <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
-            <span className="text-xs md:text-sm">Lubrication Technology</span>
+            <span className="text-xs md:text-sm -mt-1">Lubrication Technology</span>
           </div>
         </div>
 
         {/* Right Section: Icons and Dropdown */}
         <div className="flex items-center space-x-4 mt-2 md:mt-0">
           {/* Notification Bell Icon - updated to SVG */}
-          <Link to={"/Notifications"}>
+          {/* <Link to={"/Notifications"}>
             <svg
               width="24"
               height="24"
@@ -96,7 +97,38 @@ const Header = ({ accountName }) => {
                 strokeLinejoin="round"
               />
             </svg>
-          </Link>
+          </Link> */}
+          <Link to="/Notifications" className="relative">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"
+          stroke="#242424"
+          strokeWidth="1.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M13.7295 21C13.5537 21.3031 13.3014 21.5547 12.9978 21.7295C12.6941 21.9044 12.3499 21.9965 11.9995 21.9965C11.6492 21.9965 11.3049 21.9044 11.0013 21.7295C10.6977 21.5547 10.4453 21.3031 10.2695 21"
+          stroke="#242424"
+          strokeWidth="1.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+
+      {/* Notification Badge */}
+      {unreadCount > 0 && (
+        <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+          {unreadCount}
+        </span>
+      )}
+    </Link>
           {/* User Icon - updated to SVG */}
           <div className="relative dropdown-container">
             <svg
@@ -183,7 +215,7 @@ const Header = ({ accountName }) => {
             </svg>
           </Link>
           {/* Company Logo */}
-          <img src={Logo} alt="Company Logo" className="h-12 md:h-20" />
+          <img src={Logo} alt="Company Logo" className="h-[62px] " />
         </div>
       </header>
     </>

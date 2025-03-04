@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { BlinkBlur } from 'react-loading-indicators';
 import HeaderImage from "../assets/bechemheader.jpeg"
 import SuccessPopup from "./SuccessPopup";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+
 const ResetPasswordPopup = ({ onClose, selectedUser }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  
   
   const API_URI = import.meta.env.VITE_API_URI;
 
@@ -75,29 +78,23 @@ const ResetPasswordPopup = ({ onClose, selectedUser }) => {
       <div className="flex justify-center items-center min-h-screen bg-black bg-opacity-80 px-4">
         <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] relative" style={{ minHeight: "450px" }}>
           {/* Header */}
-          {/* <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg"> */}
-          <div 
-            className="flex justify-between items-center px-6 py-2 rounded-t-lg"
-            style={{
-              backgroundImage: `url(${HeaderImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          >
-            <div>
-              <h2 className="text-xl font-bold text-slate-900">Reset Password</h2>
-              <p className="text-gray-500" style={{ fontSize: "0.600rem" }}>
-                Make changes to user profile here. Click save when you're done.
-              </p>
-            </div>
-            <button 
-              className="text-white hover:text-gray-300"
-              onClick={onClose}
-              disabled={isLoading}
-            >
-              X
+        
+           <div 
+                  className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full" 
+                  style={{ backgroundImage: 'url(header.svg)', backgroundSize: "contain", backgroundPosition: "left center", backgroundRepeat: 'no-repeat' }}
+                >
+                  <div className="flex-1">
+                    <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
+                    Reset Password
+                    </h2>
+                    <p className="text-gray-500 text-[10px] leading-none m-0 px-1 font-helvetica">
+                    Make changes to user profile here. Click save when you're done.
+                    </p>
+                  </div>
+                  <button onClick={onClose}>
+              <XMarkIcon className="w-6 h-6 text-gray-500" />
             </button>
-          </div>
+                </div>
 
           {/* Content */}
           <div className="p-6 pl-24 pr-12" style={{marginTop:"30px"}}>
