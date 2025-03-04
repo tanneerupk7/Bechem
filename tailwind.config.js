@@ -33,6 +33,7 @@ export default {
         cancelButtonColor: "#CECECE",
         headerColor: "#2124321F",
         headerFontColor: "#15460B",
+        nameColor:'#395977'
       },
     },
   },

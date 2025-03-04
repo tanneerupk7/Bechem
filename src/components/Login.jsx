@@ -150,14 +150,14 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
         className="h-screen bg-cover bg-center"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-l from-black/55 h-[93%] to-transparent"></div>
+        <div className="absolute inset-0 md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-black/45 md:to-[70%] pointer-events-none"></div>
         <div className="h-full flex flex-col justify-between">
           {/* Login Form Section */}
           <div className="flex items-center h-full justify-center md:justify-end relative">
             <div className="flex flex-col mx-4 md:mr-20 w-full max-w-[26rem]">
-              <div className="bg-white bg-opacity-45 backdrop-blur-lg pb-20 rounded-2xl shadow-lg p-8 w-full">
-                <h2 className="text-3xl font-bold text-gray-800 mb-1">Login</h2>
-                <p className="text-gray-600 mb-6">Welcome to BECHEM</p>
+              <div className="bg-slate-200 bg-opacity-45 backdrop-blur-lg pb-20 rounded-3xl shadow-lg p-8 w-full">
+                <h2 className="text-3xl font-bold text-black mb-1">Login</h2>
+                <p className="text-black mb-6">Welcome to BECHEM</p>
 
                 {errorMessage && (
                   <div className="text-red-600 text-sm mb-4">
@@ -168,14 +168,14 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
                 <form>
                   <label
                     htmlFor="user-id"
-                    className="block text-gray-700 font-medium mb-2"
+                    className="block text-black font-medium mb-2"
                   >
                     User ID
                   </label>
                   <input
                     type="text"
                     id="user-id"
-                    placeholder="Enter user ID"
+                    placeholder="enter user ID"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="w-full px-4 py-2 h-11 placeholder-green-800 bg-white bg-opacity-0 border-gray-400 backdrop-blur-lg rounded-xl mb-4 focus:outline-none"
@@ -183,14 +183,14 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
 
                   <label
                     htmlFor="password"
-                    className="block text-gray-700 font-medium mb-2"
+                    className="block text-black font-medium mb-2"
                   >
                     Password
                   </label>
                   <input
                     type="password"
                     id="password"
-                    placeholder="Enter your password"
+                    placeholder="enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-2 h-11 placeholder-green-800 bg-white bg-opacity-0 border-gray-400 backdrop-blur-lg rounded-xl mb-4 focus:outline-none"
@@ -202,7 +202,7 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
                       className="text-green-800 text-sm hover:underline hover:text-hoverBlue"
                       onClick={() => setShowForgotPasswordPopup(true)}
                     >
-                      Forgot password?
+                      forgot password?
                     </button>
                   </div>
                 </form>
@@ -272,6 +272,7 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
               </div>
             </div>
           </footer>
+         
         </div>
       </div>
 
@@ -281,7 +282,7 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
             <div className="flex justify-center items-center min-h-screen w-full absolute top-0 left-0 bg-black bg-opacity-80">
               <div className="relative bg-white rounded-lg shadow-lg w-[62%] h-auto md:h-[520px] flex flex-col ">
                 {/* Header Bar */}
-                <div
+                {/* <div
                   className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
                   style={{
                     backgroundImage: `url(${headerImage})`,
@@ -300,9 +301,9 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
                       Enter the below fields here, click save when you're done
                       will notify admin.
                     </p>
-                  </div>
+                  </div> */}
                   {/* Close Button (Cross Mark) */}
-                  <button
+                  {/* <button
                     onClick={closeAllPopups}
                     className="text-gray-700 hover:text-gray-900 focus:outline-none"
                   >
@@ -321,7 +322,23 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
                       />
                     </svg>
                   </button>
-                </div>
+                </div> */}
+                       <div 
+                              className="px-3 py-1 flex justify-between items-center bg-headerColor border-b-2 border-customYellow h-[55px] w-full" 
+                              style={{ backgroundImage: 'url(header.svg)', backgroundSize: "contain", backgroundPosition: "left center", backgroundRepeat: 'no-repeat' }}
+                            >
+                              <div className="flex-1">
+                                <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
+                                Notify Admin
+                                </h2>
+                                <p className="text-gray-500 text-[9px] leading-none m-0 px-1 font-helvetica">
+                                Enter the below fields here, click save when you're done will notify admin.
+                                </p>
+                              </div>
+                              <button onClick={closeAllPopups}>
+                          <XMarkIcon className="w-6 h-6 text-gray-500" />
+                        </button>
+                            </div>
 
                 {/* Main Content */}
                 <div className="flex flex-col md:flex-row flex-grow">
@@ -340,7 +357,7 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
                       <div>
                         <label
                           htmlFor="username"
-                          className="block text-sm font-medium text-gray-700 mb-2"
+                          className="block text-sm font-medium text-nameColor mb-2"
                         >
                           User Name
                         </label>
@@ -351,14 +368,17 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
                           onChange={(e) =>
                             setFogotPasswordUsername(e.target.value)
                           }
-                          className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
+                          // className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500"
+                          // placeholder="Akhil25"
+                          className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500 placeholder:text-gray-400"
+
                           placeholder="Akhil25"
                         />
                       </div>
                       <div>
                         <label
                           htmlFor="email"
-                          className="block text-sm font-medium text-gray-700 mb-0"
+                          className="block text-sm font-medium text-nameColor mb-0"
                         >
                           Mail Id
                         </label>
@@ -369,7 +389,7 @@ export const Login = ({ setAccountId, setAccountName, setIsAdmin }) => {
                           onChange={(e) =>
                             setFogotPasswordMailId(e.target.value)
                           }
-                          className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
+                          className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500"
                           placeholder="xxxxxxxxxxxxxxxx@gmail.com"
                         />
                       </div>

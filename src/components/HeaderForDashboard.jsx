@@ -112,12 +112,12 @@ const HeaderForDashboard = ({ setAccountId, setAccountName, isAdmin }) => {
   return (
     <>
       {/* Header Section */}
-      <header className="bg-customYellow flex justify-between max-h-16 relative">
+      <header className="bg-customYellow flex justify-between max-h-[62px] relative">
         {/* Left Section: Logo and Company Name */}
         <div className="flex items-center space-x-4 ml-2">
           <div className="flex flex-col">
             <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
-            <span className="text-xs md:text-sm">Lubrication Technology</span>
+            <span className="text-xs md:text-sm -mt-1">Lubrication Technology</span>
           </div>
         </div>
 

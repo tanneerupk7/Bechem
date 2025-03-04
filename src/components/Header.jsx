@@ -51,7 +51,7 @@ const Header = ({ accountName, isAdmin, name }) => {
                 <span className="text-base md:text-lg font-bold">
                   BECHEM INDIA
                 </span>
-                <span className="text-xs md:text-sm">
+                <span className="text-xs md:text-sm ">
                   Lubrication Technology
                 </span>
               </>
