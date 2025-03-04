@@ -141,13 +141,8 @@ const SOGTable = ({ accountId,isAdmin,accountName, selectedDistributor }) => {
 
   return (
     <div className="h-screen flex flex-col">
-<<<<<<< HEAD
       <Header isAdmin={isAdmin} accountName={accountName} selectedDistributor={selectedDistributor}/>
       <div className="bg-white rounded-lg flex-1 p-4 md:p-6 ">
-=======
-      <Header isAdmin={isAdmin} accountName={accountName} />
-      <div className="bg-white rounded-lg flex-1 pb-4 md:px-6  ">
->>>>>>> 5c060787c25ded16dcfed47cd15af6333b1614c8
         <div className="relative w-full md:w-1/4 ml-auto">
           <div className="flex">
             <div className="relative inline-block">
