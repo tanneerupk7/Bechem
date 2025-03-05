@@ -52,7 +52,7 @@ const Header = ({ accountName, isAdmin, name, selectedDistributor }) => {
                   <span className="text-base md:text-lg font-bold text-headerFontColor">
                     {selectedDistributor.ac_name}
                   </span>
-                  <span className="text-xs md:text-sm text-headerFontColor">
+                  <span className="text-xs md:text-sm text-headerFontColor -mt-1">
                     Welcome to Carl Bechem Sales Order Gateway portal
                   </span>
                 </div>
