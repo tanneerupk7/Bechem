@@ -173,11 +173,7 @@ const Header = ({ accountName, isAdmin, name, selectedDistributor }) => {
 
           {isAdmin && (
             <Link to={"/Notifications"}>
-              {/* <img
-                className="cursor-pointer h-6 md:h-10"
-                src={BellIcon}
-                alt="Notification Bell"
-              /> */}
+              
               <svg
                 width="24"
                 height="24"
@@ -206,11 +202,7 @@ const Header = ({ accountName, isAdmin, name, selectedDistributor }) => {
           {/* User Icon and Dropdown */}
 
           <Link to={"/Dashboard"}>
-            {/* <img
-              className="cursor-pointer h-6 md:h-9"
-              src={HomeIcon}
-              alt="Home Icon"
-            /> */}
+            
             <svg
               width="24"
               height="24"

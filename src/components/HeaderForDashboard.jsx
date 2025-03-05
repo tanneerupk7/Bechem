@@ -37,19 +37,19 @@ const HeaderForDashboard = ({
   const API_URI = import.meta.env.VITE_API_URI;
   const navigate = useNavigate();
 
-  const handleSave = () => {
-    // Handle save logic here
-    console.log({
-      distributor,
-      userName,
-      contactPerson,
-      contactPhone,
-      mailId,
-      newPassword,
-      confirmPassword,
-      userStatus,
-    });
-  };
+  // const handleSave = () => {
+  //   // Handle save logic here
+  //   console.log({
+  //     distributor,
+  //     userName,
+  //     contactPerson,
+  //     contactPhone,
+  //     mailId,
+  //     newPassword,
+  //     confirmPassword,
+  //     userStatus,
+  //   });
+  // };
 
   useEffect(() => {
     setActiveTab(location.pathname);
@@ -60,7 +60,7 @@ const HeaderForDashboard = ({
       try {
         const response = await fetch(`${API_URI}/distributors/`);
         const data = await response.json();
-        console.log(`Distributor data: ${data}`);
+       
         if (data && data.distributors) {
           // Clean the distributor names by trimming whitespace
           const cleanedDistributors = data.distributors.map((dist) =>
@@ -104,38 +104,13 @@ const HeaderForDashboard = ({
 
     setSelectedDistributor(filteredDistributor[0]);
 
-    console.log(filteredDistributor);
+    
 
     setAccountId(filteredDistributor.ac_id);
     setAccountName(filteredDistributor.ac_name);
-
-    // if (selected) {
-    //   // Check if distributorData is defined before using it
-    //   if (!distributorData) {
-    //     console.error("Distributor data is not available.");
-    //     return;
-    //   }
-
-    //   // Find the selected distributor from distributorData
-    //   const selectedDistributorData = distributorData.find(
-    //     (dist) => dist.name === selected
-    //   );
-
-    //   if (selectedDistributorData) {
-    //     // Set the accountId and accountName using the distributor data
-    //     setAccountId(selectedDistributorData.value); // Assuming value is the accountId
-    //     setAccountName(selectedDistributorData.name);
-    //     onDistributorSelect(
-    //       selectedDistributorData.value,
-    //       selectedDistributorData.name
-    //     ); // Call the handler
-    //     setIsDropdownOpen(false); // Hide the dropdown
-    //     navigate("/Dashboard"); // Navigate to the dashboard
-    //   }
-    // }
   };
 
-  console.log("Distributor Data:", distributorData);
+  
 
   return (
     <>
@@ -143,11 +118,37 @@ const HeaderForDashboard = ({
       <header className="bg-customYellow flex justify-between max-h-[62px] relative shadow-[0_4px_6px_-2px_rgba(0,0,0,0.4)]">
         {/* Left Section: Logo and Company Name */}
         <div className="flex items-center space-x-4 ml-2">
-          <div className="flex flex-col text-[#15460B]">
-            <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
-            <span className="text-xs md:text-sm -mt-1">
-              Lubrication Technology
-            </span>
+          <div className="flex flex-col">
+            {isAdmin ? (
+              selectedDistributor.ac_name !== "" ? (
+                <div className="flex flex-col">
+                  <span className="text-base md:text-lg font-bold text-headerFontColor">
+                    {selectedDistributor.ac_name}
+                  </span>
+                  <span className="text-xs md:text-sm text-headerFontColor">
+                    Welcome to Carl Bechem Sales Order Gateway portal
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <span className="text-base md:text-lg font-bold">
+                    BECHEM INDIA
+                  </span>
+                  <span className="text-xs md:text-sm ">
+                    Lubrication Technology
+                  </span>
+                </>
+              )
+            ) : (
+              <div className="flex flex-col">
+                <span className="text-base md:text-lg font-bold text-headerFontColor">
+                  {accountName}
+                </span>
+                <span className="text-xs md:text-sm text-headerFontColor">
+                  Welcome to Carl Bechem Sales Order Gateway portal
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -284,50 +285,35 @@ const HeaderForDashboard = ({
         <div className="c-lg:px-[20%]">
           <nav className="w-[820px] h-[52px] bg-gradient-to-r from-neutral-200 to-[#d9d9d9] shadow-m border px-4 py-4 rounded-br-full rounded-bl-full ">
             <ul className="flex flex-wrap justify-center gap-4 md:gap-8">
-              {/* <li className="relative -mt-2 ">
-                <select
-                  value={selectedDistributor.ac_name}
-                  onChange={handleDistributorChange}
-                  className="text-sm font-light cursor-pointer transition-all text-slate-700 bg-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 max-w-[400px] w-full "
-                >
-                  <option value="">Select Distributor</option>
-                  {distributors.map((distributor, index) => (
-                    <option key={index} value={distributor}>
-                      {distributor}
-                    </option>
-                  ))}
-                </select>
-              </li> */}
               <li className="relative -mt-2">
-  <div className="relative w-full max-w-[400px]">
-    <select
-      value={selectedDistributor}
-      onChange={handleDistributorChange}
-      className="text-sm font-light cursor-pointer transition-all text-slate-700 bg-white rounded-md px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full appearance-none"
-    >
-      <option value="">Select Distributor</option>
-      {distributors.map((distributor, index) => (
-        <option key={index} value={distributor}>
-          {distributor}
-        </option>
-      ))}
-    </select>
-    {/* Custom Arrow */}
-    <svg
-      className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-700 pointer-events-none"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-      fill="currentColor"
-    >
-      <path
-        fillRule="evenodd"
-        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-        clipRule="evenodd"
-      />
-    </svg>
-  </div>
-</li>
-
+                <div className="relative w-full max-w-[400px]">
+                  <select
+                    value={selectedDistributor}
+                    onChange={handleDistributorChange}
+                    className="text-sm font-light cursor-pointer transition-all text-slate-700 bg-white rounded-md px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full appearance-none"
+                  >
+                    <option value="">Select Distributor</option>
+                    {distributors.map((distributor, index) => (
+                      <option key={index} value={distributor}>
+                        {distributor}
+                      </option>
+                    ))}
+                  </select>
+                  {/* Custom Arrow */}
+                  <svg
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-700 pointer-events-none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </li>
             </ul>
           </nav>
         </div>

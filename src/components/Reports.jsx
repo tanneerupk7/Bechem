@@ -4,7 +4,7 @@ const Reports = ({isAdmin,accountName, selectedDistributor}) => {
   return (
     <>
       <Header isAdmin={isAdmin} accountName={accountName} selectedDistributor={selectedDistributor}/>
-      <Cards />
+      <Cards isAdmin={isAdmin} accountName={accountName} selectedDistributor={selectedDistributor} />
     </>
   );
 };

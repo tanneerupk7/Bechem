@@ -45,10 +45,9 @@ const ProfilePage = ({ isAdmin, accountName }) => {
   // Updated fetchLogHistory with console logs
   const fetchLogHistory = async () => {
     try {
-      console.log("Fetching from:", `${API_URI}/log_history/`);
+     
       const response = await axios.get(`${API_URI}/log_history/`);
-      console.log("API Response:", response.data);
-
+     
       const formattedLogs = response.data.log_history.map((log) => ({
         id: log.LogId,
         username: log.UserId,

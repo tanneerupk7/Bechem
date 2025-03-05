@@ -8,7 +8,7 @@ import headerImage from "../assets/bechemheader.jpeg";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import AddUserPopup from "./AddUserPopup";
 
-const Header = () => {
+const Header = ({ isAdmin, accountId, distributorData,accountName,selectedDistributor }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("");
   const [showAddNewUserPopup, setShowAddNewUserPopup] = useState(false);
@@ -66,9 +66,41 @@ const Header = () => {
       <header className="bg-customYellow flex justify-between max-h-[62px] relative shadow-[0_4px_6px_-2px_rgba(0,0,0,0.4)]">
         {/* Left Section: Logo and Company Name */}
         <div className="flex items-center space-x-4 ml-2">
-          <div className="flex flex-col text-[#15460B]">
+          {/* <div className="flex flex-col text-[#15460B]">
             <span className="text-base md:text-lg font-bold">BECHEM INDIA</span>
             <span className="text-xs md:text-sm -mt-1">Lubrication Technology</span>
+          </div> */}
+          <div className="flex flex-col">
+            {isAdmin ? (
+              selectedDistributor.ac_name !== "" ? (
+                <div className="flex flex-col">
+                  <span className="text-base md:text-lg font-bold text-headerFontColor">
+                    {selectedDistributor.ac_name}
+                  </span>
+                  <span className="text-xs md:text-sm text-headerFontColor">
+                    Welcome to Carl Bechem Sales Order Gateway portal
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <span className="text-base md:text-lg font-bold">
+                    BECHEM INDIA
+                  </span>
+                  <span className="text-xs md:text-sm ">
+                    Lubrication Technology
+                  </span>
+                </>
+              )
+            ) : (
+              <div className="flex flex-col">
+                <span className="text-base md:text-lg font-bold text-headerFontColor">
+                  {accountName}
+                </span>
+                <span className="text-xs md:text-sm text-headerFontColor">
+                  Welcome to Carl Bechem Sales Order Gateway portal
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -208,7 +240,7 @@ const Header = () => {
       </div>
 
       {/* Add New User Popup */}
-      {showAddNewUserPopup && <AddUserPopup onClose={handleClosePopup} />}
+      {showAddNewUserPopup && <AddUserPopup onClose={handleClosePopup} isAdmin={isAdmin} accountId={accountId} selectedDistributor={selectedDistributor} distributorData={distributorData}/>}
     </>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import profileImg from "../assets/images/profile.png"; // Ensure you have the correct image path
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import SuccessPopup from "./successPopup"; 
+import SuccessPopup from "./successPopup";
 
 const PurchaseOrderSummary = ({ poData, onClose }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -287,28 +287,11 @@ const PurchaseOrderSummary = ({ poData, onClose }) => {
               viewBox="0 0 20 21"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              className="stroke-white stroke-[1.25] stroke-linecap-round stroke-linejoin-round"
             >
-              <path
-                d="M3.33333 12.8125C2.7142 12.18 2.24714 11.4148 1.96753 10.575C1.68792 9.73517 1.60309 8.84274 1.71946 7.96529C1.83584 7.08784 2.15038 6.24837 2.63924 5.51048C3.12811 4.7726 3.77848 4.15563 4.54111 3.70633C5.30373 3.25703 6.1586 2.98717 7.04097 2.91719C7.92334 2.84721 8.81006 2.97894 9.63397 3.30242C10.4579 3.6259 11.1974 4.13263 11.7964 4.78424C12.3955 5.43584 12.8384 6.21523 13.0917 7.06337H14.5833C15.3879 7.06328 16.1712 7.32197 16.8175 7.80124C17.4638 8.2805 17.9388 8.95492 18.1723 9.72488C18.4059 10.4948 18.3856 11.3195 18.1144 12.077C17.8433 12.8346 17.3357 13.4848 16.6667 13.9317"
-                stroke="white"
-                stroke-width="1.25"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M10 10.3965V17.8965"
-                stroke="white"
-                stroke-width="1.25"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M6.66663 14.563L9.99996 17.8963L13.3333 14.563"
-                stroke="white"
-                stroke-width="1.25"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+              <path d="M3.33333 12.8125C2.7142 12.18 2.24714 11.4148 1.96753 10.575C1.68792 9.73517 1.60309 8.84274 1.71946 7.96529C1.83584 7.08784 2.15038 6.24837 2.63924 5.51048C3.12811 4.7726 3.77848 4.15563 4.54111 3.70633C5.30373 3.25703 6.1586 2.98717 7.04097 2.91719C7.92334 2.84721 8.81006 2.97894 9.63397 3.30242C10.4579 3.6259 11.1974 4.13263 11.7964 4.78424C12.3955 5.43584 12.8384 6.21523 13.0917 7.06337H14.5833C15.3879 7.06328 16.1712 7.32197 16.8175 7.80124C17.4638 8.2805 17.9388 8.95492 18.1723 9.72488C18.4059 10.4948 18.3856 11.3195 18.1144 12.077C17.8433 12.8346 17.3357 13.4848 16.6667 13.9317" />
+              <path d="M10 10.3965V17.8965" />
+              <path d="M6.66663 14.563L9.99996 17.8963L13.3333 14.563" />
             </svg>
           </span>
           <span>Download</span>

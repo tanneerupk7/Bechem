@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { BlinkBlur } from "react-loading-indicators";
 import headerImage from "../assets/bechemheader.jpeg";
-import axios from 'axios';
+import SuccessPopup from "./SuccessPopup";
 
-const AddUserPopup = ({ onClose }) => {
+const AddUserPopup = ({
+  distributorData,
+  onClose,
+  accountId,
+  selectedDistributor,
+}) => {
   const [userStatus, setUserStatus] = useState(false); // Toggle for Active/Inactive
   const [distributor, setDistributor] = useState(""); // Distributor value
   const [userName, setUserName] = useState(""); // User Name value
@@ -14,13 +20,17 @@ const AddUserPopup = ({ onClose }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [distributorList, setDistributorList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const API_URI = import.meta.env.VITE_API_URI;
 
   useEffect(() => {
     const fetchDistributors = async () => {
       try {
-        const response = await axios.get(`${API_URI}/distributors/`);
-        const distributors = response.data.distributors.map(name => name.trim());
+        const response = await fetch(`${API_URI}/distributors/`);
+        const result = await response.json();
+        const distributors = result.distributors.map((name) => name.trim());
         setDistributorList(distributors);
       } catch (error) {
         console.error("Failed to fetch distributors:", error);
@@ -30,51 +40,90 @@ const AddUserPopup = ({ onClose }) => {
     fetchDistributors();
   }, []);
 
-  const handleSave = () => {
-    // Handle save logic here
-    console.log({
-      distributor,
-      userName,
-      contactPerson,
-      contactPhone,
-      mailId,
-      newPassword,
-      confirmPassword,
-      userStatus,
-    });
+  const addNewUser = async () => {
+    setIsLoading(true);
+    const payload = {
+      UserName: userName,
+      Passwrd: newPassword,
+      ac_name: distributor,
+      ac_id: accountId || selectedDistributor.ac_id,
+      Contactperson: contactPerson,
+      ContactNum: contactPhone,
+      active: userStatus,
+      UserMail: mailId,
+    };
+
+    try {
+      const response = await fetch(`${API_URI}/add_new_user/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Payload:", payload);
+      console.log("API Response:", result);
+
+      if (result.status === "success") {
+        setShowSuccessPopup(true);
+        resetFormFields();
+      } else {
+        console.error("Error:", result.message);
+        setErrorMessage(result.message || "Failed to add user.");
+      }
+    } catch (error) {
+      console.error("Error adding user:", error);
+      setErrorMessage("An error occurred while adding the user.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Function to reset form fields after successful submission
+  const resetFormFields = () => {
+    setDistributor("");
+    setUserName("");
+    setContactPerson("");
+    setContactPhone("");
+    setMailId("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setUserStatus(false); // Reset to inactive
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 z-50">
+      {isLoading && (
+        <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
+          <BlinkBlur color="#FBB900" size="large" />
+          <p className="mt-4 text-white">Adding user...</p>
+        </div>
+      )}
       <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        {/* Header */}
-        {/* <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg"> */}
-        {/* <div className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
-                  style={{
-                    backgroundImage: `url(${headerImage})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}>
-          <div>
-            <h2 className="text-xl font-bold text-slate-900">Add New User</h2>
-            <p className="text-gray-500" style={{ fontSize: '0.600rem' }}>
-              Add new user here. Click save when you're done.
-            </p>
-          </div>
-          <button className="text-white hover:text-gray-300" onClick={onClose}>
-            <XMarkIcon className="w-5 h-5" />
-          </button>
-        </div> */}
-         <div 
-          className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full" 
-          style={{ backgroundImage: 'url(header.svg)', backgroundSize: "contain", backgroundPosition: "left center", backgroundRepeat: 'no-repeat' }}
+        <div
+          className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full"
+          style={{
+            backgroundImage: "url(header.svg)",
+            backgroundSize: "contain",
+            backgroundPosition: "left center",
+            backgroundRepeat: "no-repeat",
+          }}
         >
           <div className="flex-1">
             <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
-            Add New User
+              Add New User
             </h2>
             <p className="text-gray-500 text-[10px] leading-none m-0 px-1 font-helvetica">
-            Add new user here. Click save when you're done.
+              Add new user here. Click save when you're done.
             </p>
           </div>
           <button className="text-gray-500" onClick={onClose}>
@@ -82,7 +131,6 @@ const AddUserPopup = ({ onClose }) => {
           </button>
         </div>
 
-        {/* Content */}
         <div className="p-6 pl-24 pr-12">
           {/* User Status */}
           <div className="flex justify-end items-center mb-4 w-full">
@@ -217,13 +265,20 @@ const AddUserPopup = ({ onClose }) => {
             </button>
             <button
               className="px-14 py-2 text-sm font-medium text-white bg-greenButtonColor rounded-md hover:bg-customYellow"
-              onClick={handleSave}
+              onClick={addNewUser}
             >
               Save
             </button>
           </div>
         </div>
       </div>
+
+      {showSuccessPopup && (
+        <SuccessPopup
+          onClose={() => setShowSuccessPopup(false)}
+          message="User registered successfully!"
+        />
+      )}
     </div>
   );
 };

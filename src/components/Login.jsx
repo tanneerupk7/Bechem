@@ -56,8 +56,6 @@ export const Login = ({
 
       const data = await response.json();
 
-      console.log(data.data);
-
       if (response.ok && data.status === "success") {
         const isAdmin = Array.isArray(data.data) && data.data.length > 1;
         setIsAdmin(isAdmin);
@@ -70,7 +68,7 @@ export const Login = ({
           // For admin, set distributor data
           setDistributorData(trimedData); // Assuming distributors are returned in the response
 
-          setAccountId(null);
+          setAccountId(398);
           setAccountName(null);
         } else {
           // For regular users, set their account details
@@ -227,13 +225,12 @@ export const Login = ({
                   />
 
                   <div className="flex justify-end items-center mb-6">
-                    <button
-                      type="button"
+                    <a
                       className="text-green-800 text-sm hover:underline hover:text-hoverBlue"
                       onClick={() => setShowForgotPasswordPopup(true)}
                     >
                       forgot password?
-                    </button>
+                    </a>
                   </div>
                 </form>
 

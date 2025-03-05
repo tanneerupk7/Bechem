@@ -15,14 +15,16 @@ import HeaderForDashboard from "./HeaderForDashboard";
 
 const Dashboard = ({
   isAdmin,
+  accountName,
+  setAccountName,
+  setAccountId,
   distributorData,
   selectedDistributor,
   setSelectedDistributor,
 }) => {
-  const [accountId, setAccountId] = useState(null);
-  const [accountName, setAccountName] = useState("");
+  // const [accountId, setAccountId] = useState(null);
 
-  console.log(selectedDistributor);
+
 
   const handleDistributorSelect = (id, name) => {
     setAccountId(id);
@@ -40,9 +42,6 @@ const Dashboard = ({
     { name: "Alcom 240", value: 15 },
   ];
 
-  console.log(
-    `isAdmin from Dashboard: ${isAdmin},accountName from Dashboard: ${accountName}`
-  );
 
   const salesTrendData = [
     { category: "STEEL", value: 72, color: "#FFC107" },
@@ -93,21 +92,6 @@ const Dashboard = ({
           selectedDistributor={selectedDistributor}
         />
       )}
-
-      {/* {isAdmin  ? (
-        <HeaderForDashboard
-          isAdmin={isAdmin}
-          accountName={accountName}
-          setAccountId={setAccountId}
-          setAccountName={setAccountName}
-          distributorData={distributorData}
-          onDistributorSelect={handleDistributorSelect}
-          selectedDistributor={selectedDistributor}
-          setSelectedDistributor={setSelectedDistributor}
-        />
-      ) : (
-        <Header accountName={accountName} isAdmin={isAdmin} />
-      )} */}
     </>
   );
 };

@@ -86,6 +86,7 @@ const App = () => {
             path="/Pending_Approvals"
             element={
               <PendingApprovals
+                isAdmin={isAdmin}
                 accountId={accountId}
                 accountName={accountName}
                 selectedDistributor={selectedDistributor}
@@ -108,8 +109,10 @@ const App = () => {
             element={
               <UsersDetails
                 accountId={accountId}
+                selectedDistributor={selectedDistributor}
                 accountName={accountName}
                 isAdmin={isAdmin}
+                distributorData={distributorData}
               />
             }
           />
@@ -136,6 +139,8 @@ const App = () => {
               <Dashboard
                 accountId={accountId}
                 accountName={accountName}
+                setAccountId={setAccountId}
+                setAccountName={setAccountName}
                 isAdmin={isAdmin}
                 distributorData={distributorData}
                 selectedDistributor={selectedDistributor}
