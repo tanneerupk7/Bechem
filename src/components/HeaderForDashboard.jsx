@@ -60,7 +60,6 @@ const HeaderForDashboard = ({
       try {
         const response = await fetch(`${API_URI}/distributors/`);
         const data = await response.json();
-
         if (data && data.distributors) {
           // Clean the distributor names by trimming whitespace
           const cleanedDistributors = data.distributors.map((dist) =>

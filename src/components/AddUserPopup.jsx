@@ -24,14 +24,23 @@ const AddUserPopup = ({
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const API_URI = import.meta.env.VITE_API_URI;
+  const [selectedDistributorId, setSelectedDistributorId] = useState(null);
+  const [errorPopupMessage, setErrorPopupMessage] = useState("");
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   useEffect(() => {
     const fetchDistributors = async () => {
       try {
-        const response = await fetch(`${API_URI}/distributors/`);
+        const response = await fetch(`${API_URI}/distributors_acid/`);
         const result = await response.json();
-        const distributors = result.distributors.map((name) => name.trim());
-        setDistributorList(distributors);
+
+        // Map to an array of objects containing both ac_id and trimmed ac_name
+        const distributors = result.distributors.map((dist) => ({
+          ac_id: dist.ac_id,
+          ac_name: dist.ac_name.trim(), // Trim whitespace from the name
+        }));
+
+        setDistributorList(distributors); // Set the state with the array of objects
       } catch (error) {
         console.error("Failed to fetch distributors:", error);
       }
@@ -46,12 +55,13 @@ const AddUserPopup = ({
       UserName: userName,
       Passwrd: newPassword,
       ac_name: distributor,
-      ac_id: accountId || selectedDistributor.ac_id,
+      ac_id: selectedDistributorId,
       Contactperson: contactPerson,
       ContactNum: contactPhone,
       active: userStatus,
       UserMail: mailId,
     };
+    console.log("payload", payload);
 
     try {
       const response = await fetch(`${API_URI}/add_new_user/`, {
@@ -63,14 +73,20 @@ const AddUserPopup = ({
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
+        const errorResponse = await response.json(); // Parse the error response
+        if (errorResponse.status_code === 404) {
+          // Check if the error is due to the username already existing
+          setErrorPopupMessage(errorResponse.detail); // Set the detailed error message
+        } else {
+          setErrorPopupMessage(
+            "An unexpected error occurred. Please try again."
+          );
+        }
+        setShowErrorPopup(true); // Show the error popup
+        return; // Exit the function early
       }
 
       const result = await response.json();
-      console.log("Payload:", payload);
       console.log("API Response:", result);
 
       if (result.status === "success") {
@@ -164,12 +180,21 @@ const AddUserPopup = ({
             <select
               className="w-full sm:w-72 border border-gray-300 rounded-md shadow-sm focus:ring-gray-300 focus:ring-opacity-50 p-2"
               value={distributor}
-              onChange={(e) => setDistributor(e.target.value)}
+              onChange={(e) => {
+                const selectedName = e.target.value;
+                const selectedDistributor = distributorList.find(
+                  (dist) => dist.ac_name === selectedName
+                );
+                if (selectedDistributor) {
+                  setDistributor(selectedName); // Set the selected distributor name
+                  setSelectedDistributorId(selectedDistributor.ac_id); // Set the selected distributor ID
+                }
+              }}
             >
               <option value="">Select a distributor</option>
               {distributorList.map((dist, index) => (
-                <option key={index} value={dist}>
-                  {dist}
+                <option key={index} value={dist.ac_name}>
+                  {dist.ac_name}
                 </option>
               ))}
             </select>
@@ -278,6 +303,37 @@ const AddUserPopup = ({
           onClose={() => setShowSuccessPopup(false)}
           message="User registered successfully!"
         />
+      )}
+
+      {showErrorPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 z-50">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div
+              className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full"
+              style={{
+                backgroundImage: "url(header.svg)",
+                backgroundSize: "contain",
+                backgroundPosition: "left center",
+                backgroundRepeat: "no-repeat",
+              }}
+            >
+              <div className="flex-1">
+                <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
+                  Error
+                </h2>
+                <p className="text-gray-500 text-[10px] leading-none m-0 px-1 font-helvetica">
+                  {errorPopupMessage}
+                </p>
+              </div>
+              <button
+                className="text-gray-500"
+                onClick={() => setShowErrorPopup(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

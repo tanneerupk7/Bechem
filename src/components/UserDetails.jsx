@@ -20,7 +20,7 @@ import HomeIcon from "../assets/home.svg";
 import Footer from "./Footer";
 import { BlinkBlur } from "react-loading-indicators";
 import SuccessPopup from "./SuccessPopup";
-
+import EditUser from "../assets/icons/EditUser.svg";
 const UsersDetails = ({
   accountName,
   isAdmin,
@@ -55,6 +55,7 @@ const UsersDetails = ({
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [showNoDataPopup, setShowNoDataPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     if (isAdmin) {
@@ -217,66 +218,80 @@ const UsersDetails = ({
     };
   }, []);
 
-  return (
-      <>
-      <div className="h-screen flex flex-col">
-        {isLoading && (
-          <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
-            <BlinkBlur 
-              color="#FBB900"
-              size="large"
-            />
-            <p className="mt-4 text-white">Loading user details...</p>
-          </div>
-        )}
-        <Header className="fixed top-0 left-0"/>
-          <div className="bg-white rounded-lg pb-4 md:px-6 flex-1">
-            <div className="relative w-full md:w-1/4 ml-auto ">
-              <div className="flex  ">
-                <div className="relative inline-block ">
-                  <button
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                    onClick={exportCSV}
-                    className="flex items-center bg-gray-300 text-white px-3 py-2 rounded-md hover:bg-customYellow mr-2"
-                  >
-                    {/* <FiDownload className="mr-2" /> */}
-                    <span className="mr-2">
-  <svg
-    className="w-5 h-5 stroke-white"
-    viewBox="0 0 20 20"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M3.33345 12.4161C2.71432 11.7835 2.24726 11.0183 1.96765 10.1785C1.68804 9.33869 1.60321 8.44626 1.71959 7.5688C1.83597 6.69135 2.1505 5.85189 2.63937 5.114C3.12823 4.37611 3.77861 3.75915 4.54123 3.30985C5.30385 2.86054 6.15873 2.59068 7.04109 2.5207C7.92346 2.45072 8.81018 2.58246 9.63409 2.90594C10.458 3.22941 11.1975 3.73615 11.7966 4.38775C12.3956 5.03936 12.8386 5.81875 13.0918 6.66689H14.5835C15.388 6.66679 16.1713 6.92549 16.8176 7.40475C17.4639 7.88402 17.9389 8.55844 18.1724 9.32839C18.406 10.0983 18.3857 10.923 18.1146 11.6805C17.8434 12.4381 17.3359 13.0883 16.6668 13.5352"
-      className="stroke-white stroke-[1.25] rounded-lg"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M10 10V17.5"
-      className="stroke-white stroke-[1.25]"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M6.6665 14.1665L9.99984 17.4998L13.3332 14.1665"
-      className="stroke-white stroke-[1.25]"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-</span>
+  const handleEditUserClick = (user) => {
+    setDistributor(user.ac_name); // Set the distributor name from the selected user
+    setUserName(user.UserName); // Set the username from the selected user
+    setShowEditUsersPopup(true); // Show the edit user popup
+  };
 
-                    Export
-                  </button>
-                  
-                  {showTooltip && (
-                    <div className="absolute z-50 w-48 px-2 py-1 -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded shadow-lg">
-                      Export user details to CSV file
-                    </div>
-                  )}
+  const handleEditUserSave = async () => {
+    const payload = {
+      ac_name: distributor,
+      UserName: userName,
+      Contactperson: contactPerson,
+      ContactNum: contactPhone,
+      new_password: newPassword,
+      confirm_password: confirmPassword,
+    };
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${API_URI}/edit_user_details/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setSuccessMessage(result.message);
+        setShowEditUsersPopup(false);
+      } else {
+        console.error("Error updating user details:", result.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="h-screen flex flex-col">
+      {isLoading && (
+        <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
+          <BlinkBlur color="#FBB900" size="large" />
+          <p className="mt-4 text-white">Updating user details...</p>
+        </div>
+      )}
+      <Header
+        className="fixed top-0 left-0"
+        distributorData={distributorData}
+        isAdmin={isAdmin}
+        accountId={accountId}
+        accountName={accountName}
+        selectedDistributor={selectedDistributor}
+      />
+      <div className="bg-white rounded-lg pb-4 md:px-6  flex-1">
+        <div className="relative w-full md:w-1/4 ml-auto ">
+          <div className="flex  ">
+            <div className="relative inline-block ">
+              <button
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                onClick={exportCSV}
+                className="flex items-center bg-gray-300 text-white px-3 py-2 rounded-md hover:bg-customYellow mr-2"
+              >
+                <FiDownload className="mr-2" />
+                Export
+              </button>
+
+              {showTooltip && (
+                <div className="absolute z-50 w-48 px-2 py-1 -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded shadow-lg">
+                  Export user details to CSV file
                 </div>
               )}
             </div>
@@ -391,13 +406,8 @@ const UsersDetails = ({
                     </span>
                   </td>
                   <td className="p-2 text-center w-[80px] min-w-[80px] max-w-[80px]">
-                    <button
-                      onClick={() => setShowEditUsersPopup(!showEditUsersPopup)}
-                    >
-                      <FontAwesomeIcon
-                        icon={faEdit}
-                        className="text-gray-600 cursor-pointer"
-                      />
+                    <button onClick={() => handleEditUserClick(data)}>
+                      <img src={EditUser} alt="Edit User" />
                     </button>
                   </td>
                 </tr>
@@ -408,27 +418,6 @@ const UsersDetails = ({
         {showEditUsersPopup && (
           <div className="flex absolute w-full top-0 left-0 justify-center items-center min-h-screen bg-black bg-opacity-80 px-4">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-[800px] relative">
-              {/* Header */}
-              {/* <div className="flex justify-between items-center bg-yellow-500 text-white px-6 py-2 rounded-t-lg"> */}
-              {/* <div className="flex justify-between items-center text-white px-3 py-3 rounded-t-lg"
-                  style={{
-                    backgroundImage: `url(${headerImage})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}>
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">Edit User</h2>
-                <p className="text-gray-500" style={{ fontSize: '0.600rem' }}>
-                  Make changes to user profile here. Click save when you're done.
-                </p>
-              </div>
-              <button 
-              className="text-white hover:text-gray-300"
-              onClick={() => setShowEditUsersPopup(!showEditUsersPopup)}
-              >
-                <XMarkIcon className="w-5 h-5" />
-              </button>
-            </div> */}
               <div
                 className="px-3 py-1 flex justify-between items-center bg-headerColor border-b border-customYellow h-[55px] w-full"
                 style={{
@@ -440,10 +429,11 @@ const UsersDetails = ({
               >
                 <div className="flex-1">
                   <h2 className="font-bold text-slate-900 font-helvetica text-[22px] leading-none p-1 whitespace-nowrap">
-                    Distributor Feedback
+                    Edit User
                   </h2>
                   <p className="text-gray-500 text-[10px] leading-none m-0 px-1 font-helvetica">
-                    Rate the delivery experience, click save when you're done.
+                    Make changes to user profile here. Click save when you're
+                    done.
                   </p>
                 </div>
                 <button
@@ -577,7 +567,10 @@ const UsersDetails = ({
                   >
                     Cancel
                   </button>
-                  <button className="px-14 py-2 text-sm font-medium text-white bg-greenButtonColor rounded-md hover:bg-customYellow">
+                  <button
+                    className="px-14 py-2 text-sm font-medium text-white bg-greenButtonColor rounded-md hover:bg-customYellow"
+                    onClick={handleEditUserSave}
+                  >
                     Save
                   </button>
                 </div>
@@ -851,7 +844,13 @@ const UsersDetails = ({
           </div>
         </div>
       )}
-      </>
+      {successMessage && (
+        <SuccessPopup
+          onClose={() => setSuccessMessage("")}
+          message={successMessage}
+        />
+      )}
+    </div>
   );
 };
 

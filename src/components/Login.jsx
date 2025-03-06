@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ground from "../assets/forget.svg";
 import logo from "../assets/bechem-logoy.jpeg";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import SuccessPopup from "./SuccessPopup";
+import SuccessPopup from "./successPopup";
 import Success from "../assets/Successful.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInstagram, faLinkedin } from "@fortawesome/free-brands-svg-icons";
@@ -32,10 +32,28 @@ export const Login = ({
   const API_URI = import.meta.env.VITE_API_URI;
   const [forgotPasswordError, setForgotPasswordError] = useState("");
   const [isForgotPasswordLoading, setIsForgotPasswordLoading] = useState(false);
+  const [forgotPasswordUsernameError, setForgotPasswordUsernameError] =
+    useState("");
+  const [forgotPasswordMailIdError, setForgotPasswordMailIdError] =
+    useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const handleLogin = async () => {
-    if (!username.trim() || !password.trim()) {
-      setErrorMessage("Please fill in all fields.");
+    setUsernameError("");
+    setPasswordError("");
+
+    if (!username.trim() && !password.trim()) {
+      setUsernameError("Please enter your username.");
+      setPasswordError("Please enter your password.");
+      return;
+    }
+    if (!username.trim()) {
+      setUsernameError("Please enter your username.");
+      return;
+    }
+    if (!password.trim()) {
+      setPasswordError("Please enter your password.");
       return;
     }
 
@@ -93,15 +111,23 @@ export const Login = ({
 
   const handleSend = async (e) => {
     e.preventDefault();
+    setForgotPasswordUsernameError("");
+    setForgotPasswordMailIdError("");
+
     if (
       forgotPasswordUsername.trim() === "" ||
       forgotPasswordMailId.trim() === ""
     ) {
-      alert("Please fill out both fields.");
+      if (forgotPasswordUsername.trim() === "") {
+        setForgotPasswordUsernameError("Please fill out your username.");
+      }
+      if (forgotPasswordMailId.trim() === "") {
+        setForgotPasswordMailIdError("Please fill out your email.");
+      }
       return;
     }
 
-    setIsForgotPasswordLoading(true); // Start loading
+    setIsForgotPasswordLoading(true);
 
     try {
       const response = await fetch(`${API_URI}/forget_password`, {
@@ -131,7 +157,6 @@ export const Login = ({
       setIsForgotPasswordLoading(false);
       setFogotPasswordUsername("");
       setFogotPasswordMailId("");
-      // Stop loading
     }
   };
 
@@ -147,8 +172,21 @@ export const Login = ({
 
   const fetchUserEmail = async (username) => {
     try {
-      const response = await axios.post("/get_mailid/", { UserName: username });
-      setFogotPasswordMailId(response.data.UserMail); // Set the fetched email in the state
+      const response = await fetch(`${API_URI}/get_mailid/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ UserName: username }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setFogotPasswordMailId(data.UserMail); // Set the fetched email in the state
+      } else {
+        console.error("Error fetching email:", data.message);
+      }
     } catch (error) {
       console.error("Error fetching email:", error);
     }
@@ -192,7 +230,6 @@ export const Login = ({
                     {errorMessage}
                   </div>
                 )}
-
                 <form>
                   <label
                     htmlFor="user-id"
@@ -209,6 +246,12 @@ export const Login = ({
                     className="w-full px-4 py-2 h-11 placeholder-green-800 bg-white bg-opacity-0 border-gray-400 backdrop-blur-lg rounded-xl mb-4 focus:outline-none"
                   />
 
+                  {usernameError && (
+                    <div className="text-red-600 text-sm mb-4">
+                      {usernameError}
+                    </div>
+                  )}
+
                   <label
                     htmlFor="password"
                     className="block text-black font-medium mb-2"
@@ -218,11 +261,17 @@ export const Login = ({
                   <input
                     type="password"
                     id="password"
-                    placeholder="enter your password"
+                    placeholder={"enter your password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-2 h-11 placeholder-green-800 bg-white bg-opacity-0 border-gray-400 backdrop-blur-lg rounded-xl mb-4 focus:outline-none"
                   />
+
+                  {passwordError && (
+                    <div className="text-red-600 text-sm mb-4">
+                      {passwordError}
+                    </div>
+                  )}
 
                   <div className="flex justify-end items-center mb-6">
                     <a
@@ -358,11 +407,14 @@ export const Login = ({
                           onChange={(e) =>
                             setFogotPasswordUsername(e.target.value)
                           }
-                          // className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500"
-                          // placeholder="Akhil25"
                           className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500 placeholder:text-gray-400"
                           placeholder="Akhil25"
                         />
+                        {forgotPasswordUsernameError && (
+                          <div className="text-red-600 text-sm mt-1">
+                            {forgotPasswordUsernameError}
+                          </div>
+                        )}
                       </div>
                       <div>
                         <label
@@ -374,13 +426,18 @@ export const Login = ({
                         <input
                           type="email"
                           id="email"
-                          value={forgotPasswordMailId} // Changed from email
+                          value={forgotPasswordMailId} // Bind the email input to the state
                           onChange={(e) =>
                             setFogotPasswordMailId(e.target.value)
                           }
                           className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500"
                           placeholder="xxxxxxxxxxxxxxxx@gmail.com"
                         />
+                        {forgotPasswordMailIdError && (
+                          <div className="text-red-600 text-sm mt-1">
+                            {forgotPasswordMailIdError}
+                          </div>
+                        )}
                       </div>
                     </form>
 

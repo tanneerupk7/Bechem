@@ -388,12 +388,12 @@ const PurchaseOrderList = ({
                 >
                   Account Status
                 </th>
-                <th
+                {/* <th
                   className="p-2 font-normal text-left"
                   style={{ width: "8%" }}
                 >
                   Invoices
-                </th>
+                </th> */}
               </tr>
             </thead>
 
@@ -447,14 +447,14 @@ const PurchaseOrderList = ({
                   <td className="p-2 text-left overflow-hidden whitespace-nowrap">
                     {data.AccStatus}
                   </td>
-                  <td className="p-2 text-left">
+                  {/* <td className="p-2 text-left">
                     <img
                       src={pdf}
                       alt="PDF Icon"
                       className="h-5 mx-auto cursor-pointer"
                       onClick={() => downloadPDF(data)}
                     />
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

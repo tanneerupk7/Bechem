@@ -441,7 +441,7 @@ const InvoiceTable = ({
                         src={feedbackIcon}
                         alt="Location Icon"
                         className="h-5 mx-auto cursor-pointer pl-1"
-                        onClick={() => handleLocationClick(data)}
+                        onClick={() => handleFeedbackClick(data)}
                       />
                     )}
                   </td>

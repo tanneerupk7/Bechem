@@ -14,6 +14,7 @@ import Notifications from "./components/Notifications";
 import Dashboard from "./components/Dashboard";
 import { AuthProvider } from "./contexts/AuthContext";
 
+
 const App = () => {
   const [accountId, setAccountId] = useState();
   const [accountName, setAccountName] = useState("");

@@ -8,7 +8,6 @@ import Header from "./Header";
 // import RewardSchemeFile from "../assets/policies/Reward Scheme.pdf";
 // import TransitDamageFile from "../assets/policies/TRANSIT DAMAGE PROCEDURE.pdf";
 
-
 const Card = ({
   icon,
   title,
@@ -109,24 +108,33 @@ const Cards = ({ isAdmin, accountName, selectedDistributor }) => {
 
   const handleDownload = async (id, title) => {
     try {
-      // First get the policy path
-      const policyResponse = await axios.get(`${API_URI}/policy/`, {
-        params: { id: id },
-      });
+      // Call the API endpoint to get the policy PDF
+      const response = await axios.post(
+        `${API_URI}/policy/`,
+        {
+          ID: id, // Send the ID in the payload
+        },
+        {
+          responseType: "arraybuffer", // Set response type to arraybuffer to handle binary data
+        }
+      );
 
-      // Then download the file
-      const response = await axios.get(`${API_URI}/download_policy/`, {
-        params: { path: policyResponse.data.path },
-        responseType: "blob",
-      });
+      // Create a Blob from the response data
+      const blob = new Blob([response.data], { type: "application/pdf" });
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      // Create a URL for the Blob
+      const downloadUrl = window.URL.createObjectURL(blob);
+
+      // Create a temporary link to download the file
       const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${title}.pdf`);
+      link.href = downloadUrl; // Set the href to the blob URL
+      link.setAttribute("download", title); // Optionally set a default filename
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
+
+      // Clean up the URL object
+      window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
       console.error("Error downloading file:", error);
       alert("Failed to download file. Please try again.");
